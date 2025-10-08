@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://bl8kwbw4u2m6g"]
+
+[ext_resource type="Texture2D" uid="uid://c5uxhx4p7x8g1" path="res://assets/book.png" id="1_ibp6n"]
+[ext_resource type="PackedScene" uid="uid://x885ynnjapxa" path="res://scenes/book/Page.tscn" id="2_0cpgy"]
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(960, 540)
+scale = Vector2(1.05663, 1.05663)
+texture = ExtResource("1_ibp6n")
+
+[node name="LeftPage" parent="." instance=ExtResource("2_0cpgy")]
+position = Vector2(577, 529)
+
+[node name="RightPage" parent="." instance=ExtResource("2_0cpgy")]
+position = Vector2(1344, 524)

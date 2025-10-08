@@ -1,0 +1,14 @@
+This page describes the story moving on from the situation, transitioning to the next scene.
+
+Eligendi facilis voluptatem aspernatur est est quia. Aut deleniti cum consectetur recusandae aut qui officiis. Qui voluptatem ullam quo ad et incidunt. Distinctio unde ut repellendus rerum enim corrupti.
+
+Dolores porro in quas. Porro nisi laboriosam ea illum optio quia. Dicta est vel sit alias. Minus est quidem consequatur tenetur et quia saepe.
+
+Delectus magni voluptatem cupiditate eius aut. Atque occaecati consequatur est culpa dignissimos aut voluptatem accusamus. Animi neque et deleniti. Quos nam labore dolorem optio ea in. Rerum dolores quasi quis repellendus magni eaque. Placeat error eaque eaque dolorem nisi tenetur dolores.
+
+You are presented with a choice in what direction to explore or proceed
+
+Choose:
+[url=option1]Stay your course[/url]
+[url=option2]Try something new[/url]
+[url=option3]Meander aimlessly[/url]

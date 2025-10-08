@@ -1,0 +1,46 @@
+[gd_scene load_steps=4 format=3 uid="uid://bl8kwbw4u2m6g"]
+
+[ext_resource type="Texture2D" uid="uid://c5uxhx4p7x8g1" path="res://assets/book.png" id="1_ibp6n"]
+[ext_resource type="Script" uid="uid://7k6i26acbctu" path="res://scripts/book.gd" id="1_pie7l"]
+[ext_resource type="PackedScene" uid="uid://x885ynnjapxa" path="res://scenes/book/Page.tscn" id="2_0cpgy"]
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("1_pie7l")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(960, 540)
+scale = Vector2(1.05663, 1.05663)
+texture = ExtResource("1_ibp6n")
+
+[node name="LeftPage" parent="." instance=ExtResource("2_0cpgy")]
+position = Vector2(577, 529)
+isLeft = true
+
+[node name="RightPage" parent="." instance=ExtResource("2_0cpgy")]
+position = Vector2(1344, 524)
+
+[node name="PrevPage" parent="." instance=ExtResource("2_0cpgy")]
+position = Vector2(577, 529)
+isLeft = true
+
+[node name="NextPage" parent="." instance=ExtResource("2_0cpgy")]
+position = Vector2(1344, 524)
+
+[node name="LeftPageButton" type="Button" parent="."]
+offset_left = 178.0
+offset_top = 842.0
+offset_right = 378.0
+offset_bottom = 1042.0
+
+[node name="RightPageButton" type="Button" parent="."]
+offset_left = 1540.0
+offset_top = 842.0
+offset_right = 1740.0
+offset_bottom = 1042.0
+
+[connection signal="link_clicked" from="LeftPage" to="." method="_on_left_page_link_clicked"]
+[connection signal="link_clicked" from="RightPage" to="." method="_on_right_page_link_clicked"]
+[connection signal="link_clicked" from="PrevPage" to="." method="_on_left_page_link_clicked"]
+[connection signal="link_clicked" from="NextPage" to="." method="_on_right_page_link_clicked"]
+[connection signal="button_up" from="LeftPageButton" to="." method="_on_left_page_button_button_up"]
+[connection signal="button_up" from="RightPageButton" to="." method="_on_right_page_button_button_up"]
