@@ -12,7 +12,7 @@ func _ready() -> void:
 	footer.horizontal_alignment =  HORIZONTAL_ALIGNMENT_RIGHT if isLeft else HORIZONTAL_ALIGNMENT_LEFT
 
 func loadContent(content: String, pageNumber: int)->void:
-	mainContent.text = ContentParser.parse(content)
+	mainContent.text = content
 	footer.text = "%d" % pageNumber
 
 func _on_main_content_meta_clicked(meta: String) -> void:

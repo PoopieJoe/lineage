@@ -7,13 +7,17 @@ extends Node2D
 @onready var leftPageNr: int = 1
 	
 func _ready() -> void:
-	var p1file := FileAccess.open("res://assets/text/Page1.txt",FileAccess.READ)
-	leftPage.loadContent(p1file.get_as_text(), leftPageNr)
-	p1file.close()
-	
-	var p2file := FileAccess.open("res://assets/text/Page2.txt",FileAccess.READ)
-	rightPage.loadContent(p2file.get_as_text(), leftPageNr + 1)
-	p2file.close()
+	#var p1file := FileAccess.open("res://assets/text/Page1.txt",FileAccess.READ)
+	#leftPage.loadContent(p1file.get_as_text(), leftPageNr)
+	#p1file.close()
+	#
+	#var p2file := FileAccess.open("res://assets/text/Page2.txt",FileAccess.READ)
+	#rightPage.loadContent(p2file.get_as_text(), leftPageNr + 1)
+	#p2file.close()
+	var event = SwordEvent.new()
+	var builtEvent = event.build()
+	var parsedEvent = EventCompiler.parse(builtEvent)
+	leftPage.loadContent(parsedEvent, leftPageNr)
 
 func _on_left_page_link_clicked(tag: Variant) -> void:
 	print("Clicked %s on left page" % tag)

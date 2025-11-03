@@ -2,68 +2,50 @@
 @startuml
 hide empty members
 
-class Generator
+class BookRenderer
+
+class StoryTeller
 {
     -state : WorldState
-    -narrator : Narrator
-    -past : Array[EventResult]
+    -narrator : config?
+    -past : array[IEvent,int]
     -present : IEvent
-    +resolve(choice : String) -> EventResult
-    +next() -> IEvent
+    +resolve(choice : int)
 }
 
 class WorldState
 {
-    +update(data : WorldChange)
     #player
     #factionRelations
     ...
 }
 
-class WorldChange
-{
-}
-
-class Narrator
-{
-    +preference
-    +difficulty
-    ...
-}
-
 Interface IEvent
 {
-    +prompt : String
-    +precond() -> bool
-    -_add_choice(
-        prompt : str, 
-        precond : Callable -> bool, 
-        effect : Callable -> WorldChange )
-    +choices : list[
-        str,
-        Callable -> bool, 
-        Callable -> WorldChange]
+    +identifier : string
+    +tags : array[string]
+    +prompt : BookSection
+    +precondition(WorldState) -> bool
+    +choices : array[BookSection,Callable[[WorldState], bool],Callable[[WorldState], BookSection]]
+    +resolve(WorldState,int) -> BookSection
 }
 
-class Event
-Event --|> IEvent
-
-class EventResult
+class BookSection
 {
-    +event : IEvent
-    +stateChange : WorldChange
-    ...
+    part : array
 }
 
-Generator *-- WorldState
-Generator *-- IEvent
-Generator *-- Narrator
-Generator *-- EventResult
-IEvent --> WorldState
-IEvent --> WorldChange
-WorldState -> WorldChange
+class Event1
+class Event2
 
-EventResult ..> IEvent
-EventResult ..> WorldChange
+Event1 --|> IEvent
+Event2 --|> IEvent
+
+StoryTeller *-- WorldState
+StoryTeller --> IEvent
+IEvent ..> WorldState
+IEvent --> BookSection
+BookRenderer --> BookSection
+
 @enduml
 ```
