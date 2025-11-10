@@ -15,11 +15,9 @@ texture = ExtResource("1_ibp6n")
 [node name="LeftPage" parent="." instance=ExtResource("2_0cpgy")]
 position = Vector2(577, 529)
 isLeft = true
-size = Vector2(600, 750)
 
 [node name="RightPage" parent="." instance=ExtResource("2_0cpgy")]
 position = Vector2(1344, 524)
-size = Vector2(600, 750)
 
 [node name="PrevPage" parent="." instance=ExtResource("2_0cpgy")]
 position = Vector2(577, 529)

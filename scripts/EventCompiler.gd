@@ -1,16 +1,20 @@
 class_name EventCompiler
 
-static func parse( content: EventNode ) -> String:
-	var newcontent : String = ""
-	assert(content.get_type() == "root")
+static func make_UIElements( content: EventNode ) -> Array[PageElement]:
+	var page_content: Array[PageElement] = []
 	for node in content.children:
+		var element : PageElement
 		match (node.get_type()):
 			TextNode.type:
-				newcontent += node.content + '\n'
+				element = Text2D.new()
+				element.text = node.content
 			ImageNode.type:
-				newcontent += node.content + '\n'
+				element = Image2D.new()
+				element.load_image(node.image_path)
 			ChoiceNode.type:
-				newcontent += node.text + '\n'
+				element = Text2D.new()
+				element.text = node.text
 			_:
 				push_error("Node of undefined type <%s>" % node.get_type())
-	return newcontent
+		page_content.append(element)
+	return page_content
