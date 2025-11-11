@@ -17,9 +17,15 @@ func make_page(elements: Array[PageElement]) -> PageElement:
 		var e:PageElement = elements.pop_front()
 		if e == null:
 			break
-		page_full = not new_page.add_element(e)
-		if page_full:
+		var page_size = new_page.get_rect().size
+		var c_size = e.get_rect().size
+		assert(c_size.y < leftPage.size.y)
+		
+		if page_size.y + c_size.y > leftPage.size.y:
+			page_full = true
 			elements.push_front(e)
+		else:
+			new_page.add_element(e)
 	return new_page
 
 func add_section(content: Array[PageElement]) -> void:

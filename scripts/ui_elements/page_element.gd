@@ -1,30 +1,25 @@
 class_name PageElement
 extends Node2D
 
-var max_size: Vector2 = Vector2(600,750)
 var size: Vector2 = Vector2.ZERO
 
 func draw_bounding_box(color:Color = Color.MAGENTA,width:int = 2) -> void:
 	draw_rect(get_rect(),color,false,width)
 
 func _draw() -> void:
-	draw_bounding_box()
+	#draw_bounding_box()
+	pass
 
-func add_element(e:PageElement) -> bool:
-	var c_size = e.get_rect().size
-	if size.y + c_size.y > max_size.y:
-		return false
-		
+func add_element(e:PageElement) -> void:
 	add_child(e)
 	e.position.y = size.y
-	size.y += c_size.y
-	return true
+	size.y += e.get_rect().size.y
 
 func get_rect() -> Rect2:
 	var top = 0.0
 	var left = 0.0
-	var bottom = 0.0
-	var right = 0.0
+	var bottom = size.y
+	var right = size.x
 	for child in get_children():
 		if child is PageElement:
 			var c_rect = child.get_rect()

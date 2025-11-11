@@ -5,6 +5,7 @@ var alignment:HorizontalAlignment = HORIZONTAL_ALIGNMENT_LEFT
 var text_color:Color = Color.BLACK
 
 func _draw():
+	draw_bounding_box()
 	if font and text != "":
 		draw_multiline_string( font,  Vector2(0,font.get_height(font_size)), 
 			text, alignment, width, font_size, -1, text_color )
@@ -38,4 +39,4 @@ var text: String = "":
 		size = font.get_multiline_string_size(text,alignment,width,font_size)
 
 func get_rect() -> Rect2:
-	return Rect2(position,size)
+	return Rect2(Vector2.ZERO,size)
