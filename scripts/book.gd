@@ -2,8 +2,6 @@ extends Node2D
 
 @onready var leftPage: Page = $LeftPage
 @onready var rightPage: Page = $RightPage
-@onready var prevPage: Page
-@onready var nextPage: Page
 @onready var leftPageNr: int = 1
 
 var pages: Array[PageElement]
@@ -14,8 +12,14 @@ func load_page(page: int) -> void:
 	
 func make_page(elements: Array[PageElement]) -> PageElement:
 	var new_page = PageElement.new()
-	var e = elements.pop_front()
-	new_page.add_child(e)
+	var page_full = false
+	while not page_full:
+		var e:PageElement = elements.pop_front()
+		if e == null:
+			break
+		page_full = not new_page.add_element(e)
+		if page_full:
+			elements.push_front(e)
 	return new_page
 
 func add_section(content: Array[PageElement]) -> void:
