@@ -1,9 +1,15 @@
 extends EventNode
 class_name TextNode
 
-var content: String
 const type = "text"
+const text_key = "text"
 
-func _init(_content: String):
-	super(type)
-	content = _content
+func _init(text: String):
+	super (type)
+	set_content(text_key, text)
+
+func get_text() -> String:
+	return get_content(text_key)
+
+func set_text(text: String):
+	set_content(text_key, text)

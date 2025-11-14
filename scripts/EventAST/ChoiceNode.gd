@@ -1,11 +1,15 @@
 extends EventNode
 class_name ChoiceNode
 
-var text: String
-var next_event_id: String
 const type = "choice"
+const text_key = "text"
 
-func _init(_text: String, _next_event_id: String):
-	super(type)
-	text = _text
-	next_event_id = _next_event_id
+func _init(text: String, choice: String):
+	super (type)
+	set_content(text_key, text)
+
+func get_text() -> String:
+	return get_content(text_key)
+
+func set_text(text: String):
+	set_content(text_key, text)

@@ -1,15 +1,24 @@
 class_name EventNode
 extends RefCounted
 
-var children: Array[EventNode]
+var _content: Dictionary
 var _type: String
 
 func _init(type: String = "root"):
 	_type = type
-	children = []
+	_content = Dictionary()
 
-func add_node(node: EventNode) -> void:
-	children.append(node)
+func set_content(key: String, value: Variant):
+	_content[key] = value
 
-func get_type():
+func has(key: String) -> bool:
+	return _content.has(key)
+
+func get_type() -> String:
 	return _type
+
+func get_all_content() -> Dictionary:
+	return _content
+	
+func get_content(key: String):
+	return _content[key]

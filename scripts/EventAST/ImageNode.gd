@@ -1,9 +1,12 @@
 extends EventNode
 class_name ImageNode
 
-var image_path: String
 const type = "image"
+const resource_path = "resource_path"
 
-func _init(_path: String):
-	super(type)
-	image_path = _path
+func _init(path: String):
+	super (type)
+	set_content(resource_path, path)
+
+func get_resource() -> String:
+	return get_content(resource_path)
