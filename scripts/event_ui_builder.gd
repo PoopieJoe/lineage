@@ -11,8 +11,8 @@ static func make_element(type: String, data: Dictionary):
 			element = Image2D.new()
 			element.load_image(data[ImageNode.resource_path])
 		ChoiceNode.type:
-			element = Text2D.new()
-			element.text = data[TextNode.text_key]
+			element = TextButton2D.new()
+			element.set_text(data[TextNode.text_key])
 			element.width = 600.0
 		_:
 			push_error("Node of type <%s> has no contructor" % type)

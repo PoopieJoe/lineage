@@ -16,3 +16,9 @@ func _init():
 	add_paragraph("Quis rerum est explicabo pariatur rerum iure. Quo vel id aut repudiandae autem. Dolorem id aut vel dolor accusamus voluptas ullam corporis. Perspiciatis suscipit repellat rerum laudantium. Dolore quia corrupti quia est sunt corporis dolor.") 
 	add_choice("Pick up the sword","pickup_sword")
 	add_choice("Leave it and move on","leave_sword")
+	add_paragraph("Quis rerum est explicabo pariatur rerum iure. Quo vel id aut repudiandae autem. Dolorem id aut vel dolor accusamus voluptas ullam corporis. Perspiciatis suscipit repellat rerum laudantium. Dolore quia corrupti quia est sunt corporis dolor.") 
+	add_paragraph("Quis rerum est explicabo pariatur rerum iure. Quo vel id aut repudiandae autem. Dolorem id aut vel dolor accusamus voluptas ullam corporis. Perspiciatis suscipit repellat rerum laudantium. Dolore quia corrupti quia est sunt corporis dolor.") 
+	add_paragraph("Quis rerum est explicabo pariatur rerum iure. Quo vel id aut repudiandae autem. Dolorem id aut vel dolor accusamus voluptas ullam corporis. Perspiciatis suscipit repellat rerum laudantium. Dolore quia corrupti quia est sunt corporis dolor.") 
+	add_paragraph("Quis rerum est explicabo pariatur rerum iure. Quo vel id aut repudiandae autem. Dolorem id aut vel dolor accusamus voluptas ullam corporis. Perspiciatis suscipit repellat rerum laudantium. Dolore quia corrupti quia est sunt corporis dolor.") 
+	add_paragraph("Quis rerum est explicabo pariatur rerum iure. Quo vel id aut repudiandae autem. Dolorem id aut vel dolor accusamus voluptas ullam corporis. Perspiciatis suscipit repellat rerum laudantium. Dolore quia corrupti quia est sunt corporis dolor.") 
+	

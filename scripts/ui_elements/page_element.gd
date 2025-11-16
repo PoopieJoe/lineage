@@ -1,34 +1,33 @@
 class_name PageElement
 extends Node2D
 
-var size: Vector2 = Vector2.ZERO
+var _size: Vector2 = Vector2.ZERO
+var size: Vector2:
+	get:
+		return get_size()
+	set(value):
+		set_size(value)
 
-func draw_bounding_box(color:Color = Color.MAGENTA,width:int = 2) -> void:
-	draw_rect(get_rect(),color,false,width)
+func draw_bounding_box(color: Color = Color.MAGENTA, width: int = 2) -> void:
+	draw_rect(Rect2(Vector2.ZERO, size), color, false, width)
 
 func _draw() -> void:
 	#draw_bounding_box()
 	pass
 
-func add_element(e:PageElement) -> void:
+func add_element(e: PageElement) -> void:
 	add_child(e)
 	e.position.y = size.y
 	size.y += e.get_rect().size.y
 
 func get_rect() -> Rect2:
-	var top = 0.0
-	var left = 0.0
-	var bottom = size.y
-	var right = size.x
-	for child in get_children():
-		if child is PageElement:
-			var c_rect = child.get_rect()
-			var c_top = c_rect.position.y
-			var c_left = c_rect.position.x
-			var c_bottom = c_top + c_rect.size.y
-			var c_right = c_rect.size.x
-			if c_top < top: top = c_top
-			if c_left < left: left = c_left
-			if c_bottom > bottom: bottom = c_bottom
-			if c_right > right: right = c_right
-	return Rect2(left,top,right-left,bottom-top)
+	return Rect2(position, size)
+
+func get_absolute_rect()-> Rect2:
+	return Rect2(global_position, size)
+
+func get_size() -> Vector2:
+	return _size
+
+func set_size(value: Vector2):
+	_size = value

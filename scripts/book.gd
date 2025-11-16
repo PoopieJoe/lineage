@@ -4,11 +4,23 @@ extends Node2D
 @onready var rightPage: Page = $RightPage
 @onready var leftPageNr: int = 1
 
+var currentpage: int = 0
 var pages: Array[PageElement]
 	
+func next_page() -> void:
+	if currentpage < pages.size() - 2:
+		load_page(currentpage + 2)
+	
+func prev_page() -> void:
+	if currentpage > 0:
+		load_page(currentpage - 2)
+	
 func load_page(page: int) -> void:
-	leftPage.loadContent(pages[page], page)
-	rightPage.loadContent(pages[page + 1], page + 1)
+	currentpage = page
+	leftPage.clear()
+	leftPage.loadContent(pages[page], page + 1)
+	rightPage.clear()
+	rightPage.loadContent(pages[page + 1], page + 2)
 	
 func make_page(elements: Array[PageElement]) -> PageElement:
 	var new_page = PageElement.new()
@@ -55,7 +67,7 @@ func _on_right_page_link_clicked(tag: Variant) -> void:
 	print("Clicked %s on right page" % tag)
 
 func _on_left_page_button_button_up() -> void:
-	pass
+	prev_page()
 
 func _on_right_page_button_button_up() -> void:
-	pass
+	next_page()
