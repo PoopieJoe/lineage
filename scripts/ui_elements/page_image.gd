@@ -4,7 +4,8 @@ extends PageElement
 var sprite: Sprite2D
 
 func _draw() -> void:
-	draw_bounding_box()
+	# draw_bounding_box()
+	pass
 
 func _init() -> void:
 	sprite = Sprite2D.new()

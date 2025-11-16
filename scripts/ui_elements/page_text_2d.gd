@@ -10,7 +10,7 @@ var width = -1
 var text: String = ""
 
 func _draw():
-	draw_bounding_box()
+	# draw_bounding_box()
 	if font and text != "":
 		draw_multiline_string( font,  Vector2(0,font.get_height(font_size)), 
 			text, alignment, width, font_size, -1, text_color )

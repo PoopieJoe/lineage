@@ -44,7 +44,7 @@ func _on_mouse_exited() -> void:
 func _on_input_event(_viewport, event, _shape_idx) -> void:
 	if event is InputEventMouseButton:
 		if not event.pressed:
-			print("Clicked \"%s\"" % _text)
+			Logger.log("Clicked \"%s\"" % _text)
 			_current_color = Color.BLACK
 		else:
 			_current_color = Color.GREEN
@@ -63,7 +63,7 @@ func set_text(value: String) -> void:
 	queue_redraw()
 
 func _draw():
-	draw_bounding_box()
+	# draw_bounding_box()
 	if font and _text != "":
 		draw_multiline_string(font, Vector2(0, font.get_height(font_size)),
 			_text, alignment, width, font_size, -1, _current_color)

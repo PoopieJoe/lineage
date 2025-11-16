@@ -8,10 +8,11 @@ signal link_clicked(tag)
 @onready var content: Node2D = $MainContent
 
 func _draw() -> void:
-	if (isLeft):
-		draw_rect(get_content_rect(),Color.BLUE,false)
-	else:
-		draw_rect(get_content_rect(),Color.RED,false)
+	pass
+	# if (isLeft):
+	# 	draw_rect(get_content_rect(),Color.BLUE,false)
+	# else:
+	# 	draw_rect(get_content_rect(),Color.RED,false)
 
 func _ready() -> void:
 	footer.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT if isLeft else HORIZONTAL_ALIGNMENT_LEFT

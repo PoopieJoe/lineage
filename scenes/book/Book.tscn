@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://7k6i26acbctu" path="res://scripts/book.gd" id="1_pie7l"]
 [ext_resource type="PackedScene" uid="uid://x885ynnjapxa" path="res://scenes/book/Page.tscn" id="2_0cpgy"]
 
-[node name="Node2D" type="Node2D"]
+[node name="Book" type="Node2D"]
 script = ExtResource("1_pie7l")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
@@ -39,6 +39,12 @@ offset_left = 1540.0
 offset_top = 842.0
 offset_right = 1740.0
 offset_bottom = 1042.0
+
+[node name="DebugLog" type="RichTextLabel" parent="."]
+offset_left = 24.0
+offset_top = 21.0
+offset_right = 592.0
+offset_bottom = 337.0
 
 [connection signal="link_clicked" from="LeftPage" to="." method="_on_left_page_link_clicked"]
 [connection signal="link_clicked" from="RightPage" to="." method="_on_right_page_link_clicked"]
