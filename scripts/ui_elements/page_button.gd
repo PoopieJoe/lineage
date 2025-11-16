@@ -1,23 +1,25 @@
 class_name TextButton2D
 extends PageElement
 
+# Button color states
 const text_color: Color = Color.BLACK
 const hover_color: Color = Color.RED
 const pressed_color: Color = Color.GREEN
 
-var alignment: HorizontalAlignment = HORIZONTAL_ALIGNMENT_LEFT
-var _current_color: Color = Color.BLACK
+var alignment: HorizontalAlignment = HORIZONTAL_ALIGNMENT_LEFT # Alignment of the button text
+var _current_color: Color = Color.BLACK 
 
 var font = ThemeDB.fallback_font
 var font_size = 20
 var width = -1
 var _text: String = ""
 
-var _area: Area2D
-var _collider: CollisionShape2D
-var _shape: RectangleShape2D
+var _area: Area2D # Area2D for detecting mouse events
+var _collider: CollisionShape2D # Collision shape for the button
+var _shape: RectangleShape2D # Shape of the button
 
 func _init() -> void:
+	# Initialize Area2D and CollisionShape2D for mouse interaction
 	_area = Area2D.new()
 	_collider = CollisionShape2D.new()
 	_shape = RectangleShape2D.new()
@@ -53,6 +55,7 @@ func _update_button_area() -> void:
 	_collider.position = position + get_size() / 2
 
 func set_text(value: String) -> void:
+	# Set the button text and update size and collider
 	_text = value
 	_shape.size = get_size()
 	_collider.shape = _shape
