@@ -1,10 +1,18 @@
 class_name EventBuilder
 extends RefCounted
 
-var _event: VLayoutNode
+var _event: EventRootNode
 
 func _init():
-	_event = VLayoutNode.new()
+	_event = EventRootNode.new()
+
+func add_tag(tag: String) -> EventBuilder:
+	_event.add_tag(tag)
+	return self
+
+func set_identifier(id: String) -> EventBuilder:
+	_event.set_identifier(id)
+	return self
 
 ## Attempts to append the text to previous paragraph, if there is no running 
 ## paragraph, creates a new one
@@ -33,5 +41,7 @@ func add_choice(text: String, next_event_id: String) -> EventBuilder:
 	_event.add_child(ChoiceNode.new(text, next_event_id))
 	return self
 
-func build() -> EventNode:
+func build(_world_state: WorldState) -> EventNode:
+	if _event.has_identifier() == false:
+		_event.set_identifier("EVENT_%08X" % randi())
 	return _event

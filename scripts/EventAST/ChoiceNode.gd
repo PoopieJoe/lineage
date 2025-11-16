@@ -15,3 +15,6 @@ func get_text() -> String:
 
 func set_text(text: String):
 	set_content(text_key, text)
+
+func get_choice() -> String:
+	return get_content(choice_key)

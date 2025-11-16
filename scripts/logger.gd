@@ -19,6 +19,10 @@ func log(message: String) -> void:
 	print(message)
 	_log(message, log_color)
 
+func info(message: String) -> void:
+	print(message)
+	_log(message, info_color)
+
 func warning(message: String) -> void:
 	push_warning(message)
 	_log(message, warning_color)

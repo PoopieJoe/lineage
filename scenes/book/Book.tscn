@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://bl8kwbw4u2m6g"]
+[gd_scene load_steps=5 format=3 uid="uid://bl8kwbw4u2m6g"]
 
 [ext_resource type="Texture2D" uid="uid://c5uxhx4p7x8g1" path="res://assets/book.png" id="1_ibp6n"]
 [ext_resource type="Script" uid="uid://7k6i26acbctu" path="res://scripts/book.gd" id="1_pie7l"]
 [ext_resource type="PackedScene" uid="uid://x885ynnjapxa" path="res://scenes/book/Page.tscn" id="2_0cpgy"]
+[ext_resource type="Script" uid="uid://b0hcqdpdege5d" path="res://scripts/storyteller.gd" id="4_a258i"]
 
 [node name="Book" type="Node2D"]
 script = ExtResource("1_pie7l")
@@ -45,6 +46,10 @@ offset_left = 24.0
 offset_top = 21.0
 offset_right = 592.0
 offset_bottom = 337.0
+
+[node name="Storyteller" type="Node" parent="."]
+script = ExtResource("4_a258i")
+metadata/_custom_type_script = "uid://b0hcqdpdege5d"
 
 [connection signal="link_clicked" from="LeftPage" to="." method="_on_left_page_link_clicked"]
 [connection signal="link_clicked" from="RightPage" to="." method="_on_right_page_link_clicked"]

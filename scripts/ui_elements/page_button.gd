@@ -7,7 +7,7 @@ const hover_color: Color = Color.RED
 const pressed_color: Color = Color.GREEN
 
 var alignment: HorizontalAlignment = HORIZONTAL_ALIGNMENT_LEFT # Alignment of the button text
-var _current_color: Color = Color.BLACK 
+var _current_color: Color = Color.BLACK
 
 var font = ThemeDB.fallback_font
 var font_size = 20
@@ -17,14 +17,13 @@ var _text: String = ""
 var _area: Area2D # Area2D for detecting mouse events
 var _collider: CollisionShape2D # Collision shape for the button
 var _shape: RectangleShape2D # Shape of the button
+var _on_click: Callable # Callable to execute on button click
 
 func _init() -> void:
 	# Initialize Area2D and CollisionShape2D for mouse interaction
 	_area = Area2D.new()
 	_collider = CollisionShape2D.new()
 	_shape = RectangleShape2D.new()
-	_shape.size = size
-	_collider.shape = _shape
 	_area.add_child(_collider)
 	add_child(_area)
 	
@@ -37,14 +36,14 @@ func _on_mouse_entered() -> void:
 	_current_color = Color.RED
 	queue_redraw()
 
-func _on_mouse_exited() -> void:	
+func _on_mouse_exited() -> void:
 	_current_color = Color.BLACK
 	queue_redraw()
 
 func _on_input_event(_viewport, event, _shape_idx) -> void:
 	if event is InputEventMouseButton:
 		if not event.pressed:
-			Logger.log("Clicked \"%s\"" % _text)
+			_on_click.call(_text)
 			_current_color = Color.BLACK
 		else:
 			_current_color = Color.GREEN
@@ -52,7 +51,7 @@ func _on_input_event(_viewport, event, _shape_idx) -> void:
 
 func _update_button_area() -> void:
 	_collider.shape = _shape
-	_collider.position = position + get_size() / 2
+	_collider.position = get_size() / 2
 
 func set_text(value: String) -> void:
 	# Set the button text and update size and collider
@@ -62,8 +61,11 @@ func set_text(value: String) -> void:
 	_update_button_area()
 	queue_redraw()
 
+func set_on_click(callable: Callable) -> void:
+	_on_click = callable
+
 func _draw():
-	# draw_bounding_box()
+	draw_bounding_box()
 	if font and _text != "":
 		draw_multiline_string(font, Vector2(0, font.get_height(font_size)),
 			_text, alignment, width, font_size, -1, _current_color)

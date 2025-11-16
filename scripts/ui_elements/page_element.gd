@@ -12,13 +12,8 @@ func draw_bounding_box(color: Color = Color.MAGENTA, width: int = 2) -> void:
 	draw_rect(Rect2(Vector2.ZERO, size), color, false, width)
 
 func _draw() -> void:
-	#draw_bounding_box()
+	draw_bounding_box()
 	pass
-
-func add_element(e: PageElement) -> void:
-	add_child(e)
-	e.position.y = size.y
-	size.y += e.get_rect().size.y
 
 func get_rect() -> Rect2:
 	return Rect2(position, size)
