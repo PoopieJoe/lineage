@@ -72,4 +72,4 @@ func get_size():
 	return font.get_multiline_string_size(_text, alignment, width, font_size)
 
 func set_size(_value: Vector2):
-	push_error("set_size() should not be called on TextButton2D")
+	Logger.error("set_size() should not be called on TextButton2D")

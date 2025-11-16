@@ -15,7 +15,7 @@ static func make_element(type: String, data: Dictionary):
 			element.set_text(data[TextNode.text_key])
 			element.width = 600.0
 		_:
-			push_error("Node of type <%s> has no contructor" % type)
+			Logger.error("Node of type <%s> has no contructor" % type)
 	return element
 
 static func make_UIElements(content: EventNode) -> Array[PageElement]:
