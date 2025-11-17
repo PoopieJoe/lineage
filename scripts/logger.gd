@@ -13,6 +13,7 @@ var _to_console: bool = true
 var _to_file: bool = true
 var _log_file_path: String = "logs/latest.log"
 var _log_file: FileAccess = null
+var _with_timestamp: bool = true
 
 func set_output(label: RichTextLabel) -> void:
     target_label = label
@@ -57,11 +58,18 @@ func parse_settings(settings_yaml: String) -> void:
         else:
             warning("No 'file_path' specified for log output.")
             _to_file = false
+        
+        if output.has("with_timestamp"):
+            _with_timestamp = output["with_timestamp"]
 
 func _init() -> void:
     parse_settings("res://settings.yaml")
 
 func _log(message: String, color: Color) -> void:
+    if _with_timestamp:
+        var timestamp = "[" + Time.get_time_string_from_system() + "] "
+        message = timestamp + message
+
     if _log_file:
         _log_file.store_line(message)
 

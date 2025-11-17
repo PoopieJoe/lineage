@@ -10,6 +10,7 @@ debug:
   enabled: false           # TODO
   log_level: "debug"       # debug | info | warning | error
   output:
+    with_timestamp: false
     to_console: true
     to_file: true
     file_name: "latest.log"
