@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://bl8kwbw4u2m6g"]
+[gd_scene load_steps=7 format=3 uid="uid://bl8kwbw4u2m6g"]
 
 [ext_resource type="Texture2D" uid="uid://c5uxhx4p7x8g1" path="res://assets/book.png" id="1_ibp6n"]
 [ext_resource type="Script" uid="uid://7k6i26acbctu" path="res://scripts/book.gd" id="1_pie7l"]
 [ext_resource type="PackedScene" uid="uid://x885ynnjapxa" path="res://scenes/book/Page.tscn" id="2_0cpgy"]
 [ext_resource type="Script" uid="uid://b0hcqdpdege5d" path="res://scripts/storyteller.gd" id="4_a258i"]
+[ext_resource type="Theme" uid="uid://dquxylvket1nm" path="res://styles/Debug.tres" id="5_xgf17"]
+[ext_resource type="StyleBox" uid="uid://dry7ijta0i026" path="res://styles/graybox.tres" id="6_n7psw"]
 
 [node name="Book" type="Node2D"]
 script = ExtResource("1_pie7l")
@@ -41,15 +43,32 @@ offset_top = 842.0
 offset_right = 1740.0
 offset_bottom = 1042.0
 
-[node name="DebugLog" type="RichTextLabel" parent="."]
-offset_left = 24.0
-offset_top = 21.0
-offset_right = 592.0
-offset_bottom = 337.0
-
 [node name="Storyteller" type="Node" parent="."]
 script = ExtResource("4_a258i")
 metadata/_custom_type_script = "uid://b0hcqdpdege5d"
+
+[node name="DebugLog" type="Panel" parent="."]
+offset_left = 30.0
+offset_top = 27.0
+offset_right = 924.0
+offset_bottom = 168.0
+theme_override_styles/panel = ExtResource("6_n7psw")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="DebugLog"]
+offset_right = 934.0
+offset_bottom = 178.0
+theme_override_constants/separation = 0
+
+[node name="Title" type="Label" parent="DebugLog/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("5_xgf17")
+text = " Debug"
+
+[node name="Feed" type="RichTextLabel" parent="DebugLog/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme = ExtResource("5_xgf17")
+bbcode_enabled = true
 
 [connection signal="link_clicked" from="LeftPage" to="." method="_on_left_page_link_clicked"]
 [connection signal="link_clicked" from="RightPage" to="." method="_on_right_page_link_clicked"]
