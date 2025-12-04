@@ -1,0 +1,14 @@
+id: test_a
+meta:
+  tags: ["tutorial","start"]
+
+content:
+  - type: text
+    text: "You chose to pick up the sword. It's not as nice as you thought it was,so you put it back on the ground where it came from, and continue your journey."
+
+  - type: text
+    text: "Quis rerum est explicabo pariatur rerum iure. Quo vel id aut repudiandae autem. Dolorem id aut vel dolor accusamus voluptas ullam corporis. Perspiciatis suscipit repellat rerum laudantium. Dolore quia corrupti quia est sunt corporis dolor."
+
+  - type: choice
+    choice: test
+    text: "Continue"

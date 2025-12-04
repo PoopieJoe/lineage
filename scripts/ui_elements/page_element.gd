@@ -12,7 +12,7 @@ func draw_bounding_box(color: Color = Color.MAGENTA, width: int = 2) -> void:
 	draw_rect(Rect2(Vector2.ZERO, size), color, false, width)
 
 func _draw() -> void:
-	draw_bounding_box()
+	# draw_bounding_box()
 	pass
 
 func get_rect() -> Rect2:

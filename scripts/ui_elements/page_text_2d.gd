@@ -6,7 +6,7 @@ var text_color:Color = Color.BLACK
 
 var _font: Font
 var font_size = 20
-var width = -1
+const width = 600
 var _text: String = ""
 
 func _init(text: String = "", font: Font = ThemeDB.fallback_font) -> void:

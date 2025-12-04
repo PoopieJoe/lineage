@@ -1,0 +1,33 @@
+id: test
+meta:
+  tags: ["tutorial","start"]
+
+content:
+  - type: text
+    text: "You find a sword on the road. It appears to be in good condition, will you take it with you?"
+
+  - type: image
+    resource_path: "assets/sword.png"
+
+  - type: text
+    text: "Quis rerum est explicabo pariatur rerum iure. Quo vel id aut repudiandae autem. Dolorem id aut vel dolor accusamus voluptas ullam corporis. Perspiciatis suscipit repellat rerum laudantium. Dolore quia corrupti quia est sunt corporis dolor."
+
+  - type: text
+    text: "Quis rerum est explicabo pariatur rerum iure. Quo vel id aut repudiandae autem. Dolorem id aut vel dolor accusamus voluptas ullam corporis. Perspiciatis suscipit repellat rerum laudantium. Dolore quia corrupti quia est sunt corporis dolor."
+
+  - type: text
+    text: "Quis rerum est explicabo pariatur rerum iure. Quo vel id aut repudiandae autem. Dolorem id aut vel dolor accusamus voluptas ullam corporis. Perspiciatis suscipit repellat rerum laudantium. Dolore quia corrupti quia est sunt corporis dolor."
+
+  - type: text
+    text: "Quis rerum est explicabo pariatur rerum iure. Quo vel id aut repudiandae autem. Dolorem id aut vel dolor accusamus voluptas ullam corporis. Perspiciatis suscipit repellat rerum laudantium. Dolore quia corrupti quia est sunt corporis dolor."
+
+  - type: text
+    text: "Quis rerum est explicabo pariatur rerum iure. Quo vel id aut repudiandae autem. Dolorem id aut vel dolor accusamus voluptas ullam corporis. Perspiciatis suscipit repellat rerum laudantium. Dolore quia corrupti quia est sunt corporis dolor."
+
+  - type: choice
+    choice: test_a
+    text: "Pick up the sword"
+
+  - type: choice
+    choice: test_b
+    text: "Leave it and move on"

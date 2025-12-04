@@ -20,8 +20,7 @@ func set_output(label: RichTextLabel) -> void:
     label.bbcode_enabled = true
 
 func parse_settings(settings_yaml: String) -> void:
-    var parser = YAMLParser.new()
-    var settings = parser.parse(settings_yaml)["debug"]
+    var settings = YAML.parse_file(settings_yaml)["debug"]
     if settings == null:
         error("Could not find 'debug' section in %s, using defaults" % settings_yaml)
 

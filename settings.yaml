@@ -1,7 +1,7 @@
 # /c:/Projects/Lineage-rpg/lineage/settings.yaml
 text_rendering:
   default_font:
-    path: "fonts/celtica/Celtica-Book.ttf"  # relative path or system font name
+    path: "fonts/Gothica/Gothica-Bold.ttf"  # relative path or system font name
     size: 18               # base point size
     color: "#FFFFFF"       # hex or named color
     alpha: 1.0             # 0.0 - 1.0

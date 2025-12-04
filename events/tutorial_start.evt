@@ -1,0 +1,36 @@
+id: tutorial_start
+meta:
+  tags: ["tutorial","start"]
+
+content:
+  - type: text
+    text: "You are a newly appointed lord after your predecessor (and mother) died during a crusade against a devil prince encroaching your lands."
+
+  - type: text
+    text: "Your first order of business is a village of the neighboring kingdom of Asteron that recently was plundered and ravaged by bandits worshiping the devil prince. Their king has abandoned them due to a famine in the rest of the kingdom, causing some to ally themselves with the devil's bandits."
+
+  - type: text
+    text: " "
+
+  - type: text
+    text: "Your advisors await your decision."
+
+  - type: choice
+    choice: dogmatic_path
+    text: "Start a religious campaign in the region with missionaries that provide food, medicine and comfort to those in distress."
+
+  - type: choice
+    choice: communal_path
+    text: "Provide military reinforcements and resources to the local lord to help him defend his lands."
+
+  - type: choice
+    choice: vengeful_path
+    text: "Raze the village and hunt the devil worshipers to prevent further spread of the devil's influence."
+
+  - type: choice
+    choice: pragmatic_path
+    text: "Offer refuge and aid to the villagers that flee the bandits, hoping to win their loyalty."
+
+  - type: choice
+    choice: reserved_path
+    text: "Implore the neighboring kingdom's king to send aid to the village and take responsibility for its people."
