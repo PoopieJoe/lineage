@@ -2,7 +2,7 @@ extends Node
 class_name Storyteller
 
 var _event_database: EventDatabase
-var _world_state: WorldState
+var _state: WorldState
 var _current_event: EventRootNode = null
 var _past_events: Array[EventRootNode] = []
 var _world_map: Map
@@ -10,12 +10,16 @@ var _mapviz: MapVisualizer = MapVisualizer.new()
 @export var data_path: String = "res://data/"
 @export var event_folder: String = "events/"
 @export var map_folder: String = "maps/"
-@export var initial_event_id: String = "test"
+@export var initial_event_id: String = "tutorial_start"
 @export var initial_location_id: String = "tutorial_temple"
 signal event_resolved(new_event: EventRootNode)
 
 func _init() -> void:
-    _world_state = WorldState.new()
+    _state = WorldState.new()
+    _state.write(WorldState.LOCATION_KEY, initial_location_id)
+    _state.write(WorldState.DATE_KEY, "DD MM YYYY")
+    _state.write(WorldState.TIME_KEY, "HH:MM")
+
     _event_database = EventDatabase.new()
     _event_database.load_events(data_path + event_folder)
     var map_parser = MapParser.new()
@@ -25,17 +29,16 @@ func _init() -> void:
     _mapviz = MapVisualizer.new()
     _mapviz.load_map(_world_map, data_path + map_folder + "world.svg", true)
 
-func _get_current_location_name() -> String:
-    return _world_map.vertex_name(_world_state.get_state(WorldState.LOCATION_KEY))
+func get_location() -> String:
+    return _world_map.vertex_name(_state.read(WorldState.LOCATION_KEY))
 
 func _ready() -> void:
-    _current_event = _event_database.get_event(initial_event_id).build(_world_state)
-    _world_state.set_state(WorldState.LOCATION_KEY, initial_location_id)
-    _mapviz.highlight(_world_state.get_state(WorldState.LOCATION_KEY), Color.RED)
-    print("current location: " + _get_current_location_name())
+    _current_event = _event_database.get_event(initial_event_id).build(_state)
+    _mapviz.highlight(_state.read(WorldState.LOCATION_KEY), Color.RED)
+    print("current location: " + get_location())
 
 func get_world_state() -> WorldState:
-    return _world_state
+    return _state
 
 func get_current_event() -> EventRootNode:
     return _current_event
@@ -53,5 +56,5 @@ func resolve_event(choice: String) -> void:
     else:
         Logger.log("Choice '%s' selected" % choice)
         _past_events.append(_current_event)
-        _current_event = _event_database.get_event(next_event_id).build(_world_state)
+        _current_event = _event_database.get_event(next_event_id).build(_state)
         event_resolved.emit(_current_event)

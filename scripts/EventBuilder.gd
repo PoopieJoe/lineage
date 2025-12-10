@@ -41,7 +41,13 @@ func add_choice(text: String, next_event_id: String) -> EventBuilder:
 	_event.add_child(ChoiceNode.new(text, next_event_id))
 	return self
 
-func build(_world_state: WorldState) -> EventNode:
+func build(_state: WorldState) -> EventNode:
 	if _event.has_identifier() == false:
 		_event.set_identifier("EVENT_%08X" % randi())
+	var headerNode = TextNode.new(
+		"%s, %s %s\n " % [
+			_state.read(WorldState.LOCATION_KEY), 
+			_state.read(WorldState.DATE_KEY), 
+			_state.read(WorldState.TIME_KEY)])
+	_event.add_child(headerNode, 0)
 	return _event

@@ -3,33 +3,27 @@ meta:
 
 content:
   - type: text
-    text: "You are a newly appointed lord after your predecessor (and mother) died during a crusade against a devil prince encroaching your lands."
+    text: "My vision has finally started coming back. However slowly, at least I can write now. I must record this, so I won't forget again. I've found myself inside a forgotten temple to some god I don't know. I only vaguely remember the stone door sliding shut behind me. What was outside there? A forest I think."
 
   - type: text
-    text: "Your first order of business is a village of the neighboring kingdom of Asteron that recently was plundered and ravaged by bandits worshiping the devil prince. Their king has abandoned them due to a famine in the rest of the kingdom, causing some to ally themselves with the devil's bandits."
+    text: "I have no memory of this place. I have no memory ever even coming to this place. But it feels right. I should be here."
+
+  - type: text
+    text: "But where even is... here?"
+
+  - type: text
+    text: "Dim flickering light coming from gemstone sconces along the walls and floor flood the hallway in an eerie red, and the act of writing is difficult as I seem to have a fresh cut in my writing hand, from the stone door perhaps? There is a small altar next to the door with a bowl surrounded by unlit candles. The depiction itself is damaged and unreadable, but given the creepy setting the god depicted was no kind god. Did I worship them?"
 
   - type: text
     text: " "
 
   - type: text
-    text: "Your advisors await your decision."
+    text: "For now, I'll..."
 
   - type: choice
-    choice: dogmatic_path
-    text: "Start a religious campaign in the region with missionaries that provide food, medicine and comfort to those in distress."
+    choice: tutorial_door
+    text: "Try opening the stone door again."
 
   - type: choice
-    choice: communal_path
-    text: "Provide military reinforcements and resources to the local lord to help him defend his lands."
-
-  - type: choice
-    choice: vengeful_path
-    text: "Raze the village and hunt the devil worshipers to prevent further spread of the devil's influence."
-
-  - type: choice
-    choice: pragmatic_path
-    text: "Offer refuge and aid to the villagers that flee the bandits, hoping to win their loyalty."
-
-  - type: choice
-    choice: reserved_path
-    text: "Implore the neighboring kingdom's king to send aid to the village and take responsibility for its people."
+    choice: tutorial_explore
+    text: "Investigate the temple."

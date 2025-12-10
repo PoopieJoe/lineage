@@ -96,7 +96,7 @@ func warning(message: String) -> void:
         _log(message, warning_color)
 
 func error(message: String) -> void:
-    if _break_on_error:
-        assert(false, message)
     push_error(message)
     _log(message, error_color)
+    if _break_on_error:
+        breakpoint

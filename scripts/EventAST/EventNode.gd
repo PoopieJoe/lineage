@@ -17,9 +17,14 @@ func has_children() -> bool:
 func get_children() -> Array:
 	return get_content(children_key) as Array[EventNode]
 
-func add_child(child: EventNode):
+func add_child(child: EventNode, index: int = -1):
 	var children = get_content(children_key) as Array[EventNode]
-	children.append(child)
+	if index == -1:
+		children.append(child)
+	elif index < -1 or index > children.size():
+		Logger.error("Index out of bounds: %d" % index)
+	else:
+		children.insert(index, child)
 
 func add_children(new_children: Array[EventNode]):
 	var children: Array = get_content(children_key)

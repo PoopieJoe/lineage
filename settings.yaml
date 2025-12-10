@@ -15,4 +15,4 @@ debug:
     to_file: true
     file_name: "latest.log"
   dev_tools:
-    break_on_error: false
+    break_on_error: true
