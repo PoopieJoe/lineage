@@ -2,7 +2,7 @@ extends Node
 class_name EventParser
 
 const EVENT_EXTENSION: String = ".evt"
-const id_key: String = "id"
+const meta_key: String = "meta"
 const content_key: String = "content"
 
 func load_from_dir(path: String) -> Dictionary:
@@ -28,6 +28,9 @@ func load_from_dir(path: String) -> Dictionary:
 func _build_event_from_data(id: String, data: Dictionary) -> EventBuilder:
     var b = EventBuilder.new()
     b.set_identifier(id)
+    var metadata = data.get(meta_key)
+    for tag in metadata.get("tags"):
+        b.add_tag(tag)
     for node in data.get(content_key):
         match node.type:
             TextNode.type:

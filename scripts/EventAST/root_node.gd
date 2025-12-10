@@ -10,6 +10,8 @@ func _init(children: Array[EventNode] = []):
 	add_children(children)
 
 func add_tag(tag: String):
+	if has(tags_key) == false:
+		set_content(tags_key, [])
 	var tags = get_content(tags_key)
 	tags.append(tag)
 	set_content(tags_key, tags)

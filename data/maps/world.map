@@ -1,0 +1,11 @@
+# Comments start with '#'
+
+vertex tutorial_temple "Temple of the First Blood"
+vertex tutorial_forest "The Ringwood"
+vertex tutorial_cave "Ringwood Cave"
+vertex tutorial_inn "The Horned Owl Inn"
+
+edge tutorial_temple tutorial_forest
+edge tutorial_forest tutorial_cave
+edge tutorial_cave tutorial_temple
+edge tutorial_forest tutorial_inn

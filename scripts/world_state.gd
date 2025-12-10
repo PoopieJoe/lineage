@@ -3,8 +3,10 @@ class_name WorldState
 
 var data: Dictionary = {}
 
+const LOCATION_KEY: String = "location"
+
 func set_state(key: String, value):
-    Logger.info("WorldState: world key '%s' set to %s" % [key, str(value)])
+    Logger.info("SET %s=%s:%s" % [key, str(value), type_string(typeof(value))])
     data[key] = value
 
 func get_state(key: String):

@@ -71,6 +71,7 @@ func _log(message: String, color: Color) -> void:
 
     if _log_file:
         _log_file.store_line(message)
+        _log_file.flush()
 
     if target_label:
         target_label.append_text("[color=" + color.to_html() + "] > " + message + "\n")
