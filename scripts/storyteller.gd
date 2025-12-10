@@ -6,6 +6,7 @@ var _world_state: WorldState
 var _current_event: EventRootNode = null
 var _past_events: Array[EventRootNode] = []
 var _world_map: Map
+var _mapviz: MapVisualizer = MapVisualizer.new()
 @export var data_path: String = "res://data/"
 @export var event_folder: String = "events/"
 @export var map_folder: String = "maps/"
@@ -21,9 +22,8 @@ func _init() -> void:
     var maps = map_parser.load_from_dir(data_path + map_folder)
     Logger.info("Loaded %d maps from %s" % [maps.size(), data_path + map_folder])
     _world_map = maps["world"]
-    var mapviz = MapVisualizer.new()
-    # mapviz.load_map(_world_map)
-    mapviz.to_svg_file(data_path + map_folder + "world.svg")
+    _mapviz = MapVisualizer.new()
+    _mapviz.load_map(_world_map, data_path + map_folder + "world.svg", true)
 
 func _get_current_location_name() -> String:
     return _world_map.vertex_name(_world_state.get_state(WorldState.LOCATION_KEY))
@@ -31,6 +31,7 @@ func _get_current_location_name() -> String:
 func _ready() -> void:
     _current_event = _event_database.get_event(initial_event_id).build(_world_state)
     _world_state.set_state(WorldState.LOCATION_KEY, initial_location_id)
+    _mapviz.highlight(_world_state.get_state(WorldState.LOCATION_KEY), Color.RED)
     print("current location: " + _get_current_location_name())
 
 func get_world_state() -> WorldState:
