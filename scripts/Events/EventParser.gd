@@ -2,8 +2,6 @@ extends Node
 class_name EventParser
 
 const EVENT_EXTENSION: String = ".evt"
-const meta_key: String = "meta"
-const content_key: String = "content"
 
 func load_from_dir(path: String) -> Dictionary:
     var dir = DirAccess.open(path)
@@ -26,19 +24,36 @@ func load_from_dir(path: String) -> Dictionary:
     return events
 
 func _build_event_from_data(id: String, data: Dictionary) -> EventBuilder:
-    var b = EventBuilder.new()
-    b.set_identifier(id)
-    var metadata = data.get(meta_key)
-    for tag in metadata.get("tags"):
-        b.add_tag(tag)
-    for node in data.get(content_key):
-        match node.type:
-            TextNode.type:
-                b.add_paragraph(node.get(TextNode.text_key))
-            ImageNode.type:
-                b.add_image(node.get(ImageNode.resource_path))
-            ChoiceNode.type:
-                b.add_choice(node.get(ChoiceNode.text_key), node.get(ChoiceNode.choice_key))
+    var builder = EventBuilder.new()
+    builder.set_identifier(id)
+    var metadata = data.get("meta", {})
+    for tag in metadata.get("tags", []):
+        builder.add_tag(tag)
+    builder = _build_content(builder, data)
+    return builder.finalize()
+
+func _build_content(builder: EventBuilder, data: Dictionary) -> EventBuilder:
+    var content = data.get("content", [])
+    for idx in content.size():
+        var node = content[idx]
+        if not node.has("type"):
+            Logger.warning("Node %i missing 'type' field" % idx)
+        var type = node.get("type") as String
+        match type:
+            "text":
+                builder.add_paragraph(node.get("text"))
+            "image":
+                builder.add_image(node.get("resource_path"))
+            "choice":
+                builder.add_choice(node.get("text"), node.get("choice"))
+            "choose":
+                builder.add_section()
+            "vspace":
+                builder.add_vspace(node.get("size"))
+            "branch":
+                builder.enter_branch(node.get("condition"))
+                builder = _build_content(builder, node)
+                builder.exit_branch()
             _:
-                Logger.warning("Unknown node type: %s" % str(node.type))
-    return b
+                Logger.warning("Node type \"%s\" has no defined build node" % type)
+    return builder

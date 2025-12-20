@@ -3,7 +3,8 @@ class_name WorldState
 
 var data: Dictionary = {}
 
-const LOCATION_KEY: String = "location"
+const LOCATION_ID_KEY: String = "location_id"
+const LOCATION_NAME_KEY: String = "location_name"
 const TIME_KEY: String = "time"
 const DATE_KEY: String = "date"
 
