@@ -1,4 +1,4 @@
-class_name TextButton2D
+class_name ChoiceButton2D
 extends PageElement
 
 # Button color states
@@ -14,15 +14,17 @@ var font_size = 20
 const width = 600
 var _text: String
 const _prefix: String = " > "
+var _node: ChoiceNode
 
 var _area: Area2D # Area2D for detecting mouse events
 var _collider: CollisionShape2D # Collision shape for the button
 var _shape: RectangleShape2D # Shape of the button
 var _on_click: Callable # Callable to execute on button click
 
-func _init(text: String = "", font: Font = ThemeDB.fallback_font) -> void:
+func _init(node: ChoiceNode, text: String, font: Font = ThemeDB.fallback_font) -> void:
 	_text = text
 	_font = font
+	_node = node
 
 	# Initialize Area2D and CollisionShape2D for mouse interaction
 	_area = Area2D.new()
@@ -47,7 +49,7 @@ func _on_mouse_exited() -> void:
 func _on_input_event(_viewport, event, _shape_idx) -> void:
 	if event is InputEventMouseButton:
 		if not event.pressed:
-			_on_click.call(_text)
+			_on_click.call(self)
 			_current_color = Color.BLACK
 		else:
 			_current_color = Color.GREEN
@@ -57,6 +59,9 @@ func _update_button_area() -> void:
 	_shape.size = get_size()
 	_collider.shape = _shape
 	_collider.position = get_size() / 2
+
+func get_evt_node() -> ChoiceNode:
+	return _node
 
 func set_text(value: String) -> void:
 	# Set the button text and update size and collider
@@ -81,4 +86,4 @@ func get_size():
 	return _font.get_multiline_string_size(_prefix + _text, alignment, width, font_size)
 
 func set_size(_value: Vector2):
-	Logger.error("set_size() should not be called on TextButton2D")
+	Logger.error("set_size() should not be called on ChoiceButton2D")

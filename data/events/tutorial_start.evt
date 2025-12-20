@@ -30,14 +30,32 @@ content:
 
   - type: choose
 
+  - type: vspace
+    size: 1.5
+
   - type: branch
     condition: tutorial_door
     content:
       - type: text
-        text: "ATTEMPTED TO OPEN THE DOOR"
+        text: "No matter how hard I push or pull, the massive stone remains."
+
+      - type: text
+        text: "Lorem ipsum dolor sit amet consectetur adipiscing elit. Ex sapien vitae pellentesque sem placerat in id. Pretium tellus duis convallis tempus leo eu aenean. Urna tempor pulvinar vivamus fringilla lacus nec metus. Iaculis massa nisl malesuada lacinia integer nunc posuere. Semper vel class aptent taciti sociosqu ad litora. Conubia nostra inceptos himenaeos orci varius natoque penatibus. Dis parturient montes nascetur ridiculus mus donec rhoncus. Nulla molestie mattis scelerisque maximus eget fermentum odio. Purus est efficitur laoreet mauris pharetra vestibulum fusce."
+
+      - type: choice
+        choice: tutorial_explore
+        text: "Investigate the temple."
+
+      - type: choose
+
+      - type: vspace
+        size: 1.5
   
   - type: branch
     condition: tutorial_explore
     children:
       - type: text
-        text: "EXPLORE THE TEMPLE"
+        text: "I continue to explore the temple"
+
+      - type: text
+        text: "Lorem ipsum dolor sit amet consectetur adipiscing elit. Ex sapien vitae pellentesque sem placerat in id. Pretium tellus duis convallis tempus leo eu aenean. Urna tempor pulvinar vivamus fringilla lacus nec metus. Iaculis massa nisl malesuada lacinia integer nunc posuere. Semper vel class aptent taciti sociosqu ad litora. Conubia nostra inceptos himenaeos orci varius natoque penatibus. Dis parturient montes nascetur ridiculus mus donec rhoncus. Nulla molestie mattis scelerisque maximus eget fermentum odio. Purus est efficitur laoreet mauris pharetra vestibulum fusce."

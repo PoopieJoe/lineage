@@ -14,7 +14,6 @@ func set_condition(condition: String):
 func evaluate(state: WorldState) -> bool:
 	var val = state.read(get_condition())
 	if val == null:
-		Logger.warning("'%s' not found in WorldState" % get_condition())
 		val = false
 	var result = val as bool
 	Logger.info("Condition '%s' evaluated %s" % [get_condition(), str(result)])

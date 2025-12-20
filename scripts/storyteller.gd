@@ -48,13 +48,15 @@ func get_world_state() -> WorldState:
 func get_current_event() -> EventBuilder:
     return _current_event
 
+func click(node: EventNode) -> void:
+    if node is ChoiceNode:
+        _state.write(node.get_choice(), true)
+    else:
+        Logger.warning("Node %s has no associated click behavior" % node.get_type())
+
 func resolve_event(choice: String) -> void:
-    var choices = _current_event.get_choices()
     var next_event_id = null
-    for c: ChoiceNode in choices:
-        if c.get_text() == choice:
-            next_event_id = c.get_choice()
-            break
+    # Determine next event
 
     if next_event_id == null:
         Logger.error("Choice '%s' not found" % choice)
