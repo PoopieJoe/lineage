@@ -4,7 +4,6 @@ class_name Storyteller
 var _event_database: EventDatabase
 var _state: WorldState
 var _current_event: EventBuilder = null
-var _past_events: Array[EventRootNode] = []
 var _world_map: Map
 var _mapviz: MapVisualizer = MapVisualizer.new()
 @export var data_path: String = "res://data/"
@@ -51,21 +50,20 @@ func get_current_event() -> EventBuilder:
 func click(node: EventNode) -> void:
     if node is ChoiceNode:
         _state.write(node.get_choice(), true)
+    elif node == null:
+        # null node indicates end of event
+        resolve_event()
     else:
         Logger.warning("Node %s has no associated click behavior" % node.get_type())
 
-func resolve_event(choice: String) -> void:
-    var next_event_id = null
-    # Determine next event
+func resolve_event() -> void:
+    Logger.info("Event '%s' resolved" % _current_event.get_identifier())   
 
-    if next_event_id == null:
-        Logger.error("Choice '%s' not found" % choice)
-    else:
-        Logger.log("Choice '%s' selected" % choice)
-        _past_events.append(_current_event)
-        _current_event = _event_database.get_event(next_event_id) \
-            .add_header("%s\n%s\n%s\n " % [
-                _state.read(WorldState.LOCATION_NAME_KEY), 
-                _state.read(WorldState.DATE_KEY), 
-                _state.read(WorldState.TIME_KEY)])
-        event_resolved.emit(_current_event)
+    # Determine next event
+    _current_event = _event_database.get_event(initial_event_id) \
+        .add_header("%s\n%s\n%s\n " % [
+			_state.read(WorldState.LOCATION_NAME_KEY), 
+			_state.read(WorldState.DATE_KEY), 
+			_state.read(WorldState.TIME_KEY)])
+
+    event_resolved.emit(_current_event)

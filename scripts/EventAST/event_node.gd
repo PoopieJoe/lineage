@@ -4,10 +4,21 @@ extends RefCounted
 var _content: Dictionary
 var _type: String
 
-func _init(type: String):
+func _init(type: String, parent: EventNode = null):
 	_type = type
 	_content = Dictionary()
 	set_content("children", [])
+	set_content("parent", parent)
+	set_content("next", null)
+
+func get_parent_node() -> EventNode:
+	return get_content("parent") as EventNode
+
+func get_next_node() -> EventNode:
+	return get_content("next") as EventNode
+
+func set_next_node(next_node: EventNode):
+	set_content("next", next_node)
 
 func has_children() -> bool:
 	var children: Array = get_content("children")

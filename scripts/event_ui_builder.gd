@@ -30,4 +30,15 @@ static func make_UIElements(content: EventNode, on_click: Callable, settings) ->
                 _:
                     Logger.warning("Node of type \"%s\" has no element" % type)
             
+    var has_choices = false
+    for element in page_content:
+        if element is ChoiceButton2D:
+            has_choices = true
+            break
+    if not has_choices:
+        # Add default continue
+        var continue_element = ChoiceButton2D.new(null, "The story continues...", font)
+        continue_element.set_on_click(on_click)
+        page_content.append(continue_element)
+
     return page_content

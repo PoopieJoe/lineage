@@ -5,6 +5,7 @@ extends PageElement
 const text_color: Color = Color.BLACK
 const hover_color: Color = Color.RED
 const pressed_color: Color = Color.GREEN
+const disabled_color: Color = Color.DARK_GRAY 
 
 var alignment: HorizontalAlignment = HORIZONTAL_ALIGNMENT_LEFT # Alignment of the button text
 var _current_color: Color = Color.BLACK
@@ -20,6 +21,7 @@ var _area: Area2D # Area2D for detecting mouse events
 var _collider: CollisionShape2D # Collision shape for the button
 var _shape: RectangleShape2D # Shape of the button
 var _on_click: Callable # Callable to execute on button click
+var enabled: bool = true
 
 func _init(node: ChoiceNode, text: String, font: Font = ThemeDB.fallback_font) -> void:
 	_text = text
@@ -39,14 +41,20 @@ func _init(node: ChoiceNode, text: String, font: Font = ThemeDB.fallback_font) -
 	_update_button_area()
 
 func _on_mouse_entered() -> void:
+	if enabled == false:
+		return
 	_current_color = Color.RED
 	queue_redraw()
 
 func _on_mouse_exited() -> void:
+	if enabled == false:
+		return
 	_current_color = Color.BLACK
 	queue_redraw()
 
 func _on_input_event(_viewport, event, _shape_idx) -> void:
+	if enabled == false:
+		return
 	if event is InputEventMouseButton:
 		if not event.pressed:
 			_on_click.call(self)
@@ -76,6 +84,11 @@ func set_font(value: Font) -> void:
 
 func set_on_click(callable: Callable) -> void:
 	_on_click = callable
+
+func disable() -> void:
+	enabled = false
+	_current_color = disabled_color
+	queue_redraw()
 
 func _draw():
 	# draw_bounding_box()

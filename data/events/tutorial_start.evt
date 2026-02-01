@@ -53,7 +53,7 @@ content:
   
   - type: branch
     condition: tutorial_explore
-    children:
+    content:
       - type: text
         text: "I continue to explore the temple"
 

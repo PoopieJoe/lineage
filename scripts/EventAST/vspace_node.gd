@@ -1,8 +1,8 @@
 extends EventNode
 class_name VSpaceNode
 
-func _init(size: int):
-	super ("vspace")
+func _init(parent: EventNode, size: int):
+	super ("vspace", parent)
 	set_size( size )
 
 func get_size() -> int:

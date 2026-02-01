@@ -1,8 +1,8 @@
 extends EventNode
 class_name ChoiceNode
 
-func _init(text: String, choice: String):
-	super ("choice")
+func _init(parent: EventNode, text: String, choice: String):
+	super ("choice", parent)
 	set_content("text", text)
 	set_content("choice", choice)
 

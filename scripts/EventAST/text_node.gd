@@ -2,8 +2,8 @@ extends EventNode
 class_name TextNode
 
 
-func _init(text: String):
-	super ("text")
+func _init(parent: EventNode, text: String):
+	super ("text", parent)
 	set_content("text", text)
 
 func get_text() -> String:

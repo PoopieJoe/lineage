@@ -2,7 +2,7 @@ class_name EventRootNode
 extends EventNode
 
 func _init(children: Array[EventNode] = []):
-	super ("root")
+	super ("root", null)
 	add_children(children)
 
 func add_tag(tag: String):
