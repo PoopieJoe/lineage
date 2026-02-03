@@ -1,19 +1,21 @@
-class_name EvtTokenizer
-## This Tokenizer was co-authored by Claude (Sonnet 4.5)
+class_name EvtLexer
+## This Lexer was co-authored by Claude (Sonnet 4.5)
 
 enum TokenType {
     EOF,
     IDENTIFIER, # Variable names, function names
     STRING, # String literals in quotes
     NUMBER, # Numeric literals
-    LEFT_PAREN, # (
-    RIGHT_PAREN, # )
-    LEFT_BRACE, # {
-    RIGHT_BRACE, # }
-    COMMA, # ,
-    UNARY, # Unary operators (NOT)
-    NEWLINE, # Line breaks (for tracking line numbers)
+    LPAREN, # (
+    RPAREN, # )
+    LBRACE, # {
+    RBRACE, # }
+    UNARY, # Unary operators
+    NEWLINE, # Line breaks
+    KEYWORD, # Keywords
 }
+
+enum Keywords {NOT, IF, ELSE, WHILE, TAG, HEADER, CHOICE, CHOSEN, VSPACE}
 
 ## Represents a single token
 class Token:
@@ -21,16 +23,18 @@ class Token:
     var value: String
     var line: int
     var column: int
+    var length: int
     
-    func _init(p_type: TokenType, p_value: String, p_line: int, p_column: int):
+    func _init(p_type: TokenType, p_value: String, p_line: int, p_column: int, p_length):
         type = p_type
         value = p_value
         line = p_line
         column = p_column
+        length = p_length
     
     func _to_string() -> String:
-        return "Token(%s, '%s', Line: %d, Col: %d)" % [
-            TokenType.keys()[type], value, line, column
+        return "Token(%s, '%s', Line: %d, Col: %d, Len: %d)" % [
+            TokenType.keys()[type], value, line, column, length
         ]
 
 var source: String = ""
@@ -69,7 +73,7 @@ func tokenize() -> Array[Token]:
         
         # Handle newlines
         if current_char == '\n':
-            _add_token(TokenType.NEWLINE, "\\n")
+            _add_token(TokenType.NEWLINE, "\\n", line, column, 2)
             _advance()
             line += 1
             column = 1
@@ -93,25 +97,22 @@ func tokenize() -> Array[Token]:
         # Handle single-character tokens
         match current_char:
             '(':
-                _add_token(TokenType.LEFT_PAREN, "(")
+                _add_token(TokenType.LPAREN, "(", line, column, 1)
                 _advance()
             ')':
-                _add_token(TokenType.RIGHT_PAREN, ")")
+                _add_token(TokenType.RPAREN, ")", line, column, 1)
                 _advance()
             '{':
-                _add_token(TokenType.LEFT_BRACE, "{")
+                _add_token(TokenType.LBRACE, "{", line, column, 1)
                 _advance()
             '}':
-                _add_token(TokenType.RIGHT_BRACE, "}")
-                _advance()
-            ',':
-                _add_token(TokenType.COMMA, ",")
+                _add_token(TokenType.RBRACE, "}", line, column, 1)
                 _advance()
             _:
                 push_error("Unexpected character '%s' at line %d, column %d" % [current_char, line, column])
                 break
     
-    _add_token(TokenType.EOF, "")
+    _add_token(TokenType.EOF, "", line, column, 0)
     return tokens
 
 ## Get current character
@@ -203,7 +204,7 @@ func _tokenize_string() -> void:
     
     _advance() # Skip closing quote
     
-    _add_token(TokenType.STRING, string_value, start_line, start_column)
+    _add_token(TokenType.STRING, string_value, start_line, start_column, len(string_value))
 
 ## Tokenize numbers
 func _tokenize_number() -> void:
@@ -227,14 +228,7 @@ func _tokenize_number() -> void:
         _advance()
         number_str += c
     
-    _add_token(TokenType.NUMBER, number_str, line, start_column)
-
-func _get_keyword_type(identifier: String) -> TokenType:
-    match identifier:
-        "NOT":
-            return TokenType.UNARY
-        _:
-            return TokenType.IDENTIFIER
+    _add_token(TokenType.NUMBER, number_str, line, start_column, len(number_str))
 
 ## Tokenize identifiers
 func _tokenize_identifier() -> void:
@@ -249,11 +243,13 @@ func _tokenize_identifier() -> void:
         else:
             break
 
-    var type = _get_keyword_type(identifier)
-    _add_token(type, identifier, line, start_column)
+    var type = TokenType.IDENTIFIER
+    if identifier in Keywords.keys():
+        type = TokenType.KEYWORD
+    _add_token(type, identifier, line, start_column, len(identifier))
 
-func _add_token(type: TokenType, value: String, p_line = line, p_column = column) -> void:
-    tokens.append(Token.new(type, value, p_line, p_column))
+func _add_token(type: TokenType, value: String, p_line: int, p_column: int, p_length: int) -> void:
+    tokens.append(Token.new(type, value, p_line, p_column, p_length))
 
 ## Get all tokens as an array
 func get_tokens() -> Array[Token]:

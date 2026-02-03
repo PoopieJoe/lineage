@@ -4,15 +4,19 @@ class_name EvtASTNode
 ## Base class for all AST nodes
 
 enum NodeType {
-	ROOT, # Root node containing all statements
-	FUNCTION_CALL, # Function calls like TAG(), ADDTEXT()
-	IF_STATEMENT, # IF(...) { ... } ELSE { ... }
-	WHILE_STATEMENT, # WHILE(...) { ... }
+	ROOT, # Root node
+	CALL, # Function calls
+	IF, # IF(...) { ... } ELSE { ... }
+	WHILE, # WHILE(...) { ... }
+	TAG, # TAG(...)
+	VSPACE, # VSPACE(...)
+	HEADER, # HEADER
 	BLOCK, # { ... }
 	STRING_LITERAL, # "text"
 	NUMBER_LITERAL, # 123, 4.5
 	IDENTIFIER, # Variable names
-	UNARY_EXPRESSION, # NOT expression
+	EXPR, # Expressions
+	UNARY_EXPR, # NOT expression
 }
 
 var type: NodeType
@@ -50,7 +54,7 @@ func _to_string_recursive(child_id: String, indent: int) -> String:
 
 ## Specific node types for convenience
 
-class ProgramNode extends EvtASTNode:
+class RootNode extends EvtASTNode:
 	var statements: Array[EvtASTNode] = []
 	func _init():
 		super._init(NodeType.ROOT)
@@ -59,25 +63,13 @@ class ProgramNode extends EvtASTNode:
 		statements.append(statement)
 		add_printable_child("statement", statement)
 
-class FunctionCallNode extends EvtASTNode:
-	var function_name: String
-	var arguments: Array[EvtASTNode] = []
-	
-	func _init(p_name: String, p_line: int = 0, p_column: int = 0):
-		super._init(NodeType.FUNCTION_CALL, p_name, p_line, p_column)
-		function_name = p_name
-	
-	func add_argument(arg: EvtASTNode) -> void:
-		arguments.append(arg)
-		add_printable_child("argument", arg)
-
-class IfStatementNode extends EvtASTNode:
+class IfNode extends EvtASTNode:
 	var condition: EvtASTNode
 	var then_block: EvtASTNode
 	var else_block: EvtASTNode
 	
 	func _init(p_condition: EvtASTNode, p_line: int = 0, p_column: int = 0):
-		super._init(NodeType.IF_STATEMENT, null, p_line, p_column)
+		super._init(NodeType.IF, null, p_line, p_column)
 		condition = p_condition
 		add_printable_child("condition", condition)
 	
@@ -89,18 +81,30 @@ class IfStatementNode extends EvtASTNode:
 		else_block = block
 		add_printable_child("else_block", else_block)
 
-class WhileStatementNode extends EvtASTNode:
+class WhileNode extends EvtASTNode:
 	var condition: EvtASTNode
 	var body_block: EvtASTNode
 	
 	func _init(p_condition: EvtASTNode, p_line: int = 0, p_column: int = 0):
-		super._init(NodeType.WHILE_STATEMENT, null, p_line, p_column)
+		super._init(NodeType.WHILE, null, p_line, p_column)
 		condition = p_condition
 		add_printable_child("condition", condition)
 	
 	func set_body_block(block: EvtASTNode) -> void:
 		body_block = block
 		add_printable_child("body_block", body_block)
+
+class TagNode extends EvtASTNode:
+	func _init(p_value: String, p_line: int = 0, p_column: int = 0):
+		super._init(NodeType.TAG, p_value, p_line, p_column)
+
+class VspaceNode extends EvtASTNode:
+	func _init(p_value: float, p_line: int = 0, p_column: int = 0):
+		super._init(NodeType.TAG, p_value, p_line, p_column)
+
+class HeaderNode extends EvtASTNode:
+	func _init(p_line: int = 0, p_column: int = 0):
+		super._init(NodeType.HEADER, null, p_line, p_column)
 
 class BlockNode extends EvtASTNode:
 	var statements: Array[EvtASTNode] = []
@@ -138,7 +142,11 @@ class UnaryExpressionNode extends EvtASTNode:
 	var operand: EvtASTNode
 	
 	func _init(p_operator: String, p_operand: EvtASTNode, p_line: int = 0, p_column: int = 0):
-		super._init(NodeType.UNARY_EXPRESSION, p_operator, p_line, p_column)
+		super._init(NodeType.UNARY_EXPR, p_operator, p_line, p_column)
 		operator = p_operator
 		operand = p_operand
 		add_printable_child("operand", operand)
+
+class ExpressionNode extends EvtASTNode:
+	func _init(p_line: int = 0, p_column: int = 0):
+		super._init(NodeType.EXPR, p_line, p_column)

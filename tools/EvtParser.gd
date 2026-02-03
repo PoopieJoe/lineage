@@ -3,68 +3,86 @@ class_name EVTParser
 
 ## Parser that converts tokens into an Abstract Syntax Tree (AST)
 
-var tokens: Array[EvtTokenizer.Token] = []
+var tokens: Array[EvtLexer.Token] = []
 var current_position: int = 0
 
-func _init(p_tokens: Array[EvtTokenizer.Token] = []):
+func _init(p_tokens: Array[EvtLexer.Token] = []):
 	tokens = p_tokens
 
 ## Parse the entire token stream into an AST
-func parse() -> EvtASTNode.ProgramNode:
-	var program = EvtASTNode.ProgramNode.new()
+func parse() -> EvtASTNode.RootNode:
+	var program = EvtASTNode.RootNode.new()
 	current_position = 0
 	
-	while not _match([EvtTokenizer.TokenType.EOF]):
+	while not _match([EvtLexer.TokenType.EOF]):
 		# Skip newlines at the top level
-		if _match([EvtTokenizer.TokenType.NEWLINE]):
+		if _match([EvtLexer.TokenType.NEWLINE]):
 			continue
 		
 		var statement = _parse_statement()
 		if statement:
 			program.add_statement(statement)
+		else:
+			break
 	
 	return program
 
 ## Parse a single statement
 func _parse_statement() -> EvtASTNode:
 	# Skip newlines
-	while _match([EvtTokenizer.TokenType.NEWLINE]):
+	while _match([EvtLexer.TokenType.NEWLINE]):
 		pass
 	
-	if _match([EvtTokenizer.TokenType.EOF]):
+	if _match([EvtLexer.TokenType.EOF]):
 		return null
-	
+
+	# var token = _peek()
+	# print(EvtLexer.TokenType.keys()[token.type])
+	# var i = 1000000
+	# while (i > 0):
+	# 	i = i - 1
+
 	# Check for control flow statements
-	if _check(EvtTokenizer.TokenType.IDENTIFIER):
-		var identifier = _peek()
+	if _check(EvtLexer.TokenType.KEYWORD):
+		var keyword = _peek()
 		
-		match identifier.value:
-			"IF":
-				return _parse_if_statement()
-			"WHILE":
-				return _parse_while_statement()
+		match EvtLexer.Keywords[keyword.value]:
+			EvtLexer.Keywords.IF:
+				return _parse_if()
+			EvtLexer.Keywords.WHILE:
+				return _parse_while()
+			EvtLexer.Keywords.TAG:
+				return _parse_tag()
+			EvtLexer.Keywords.HEADER:
+				return _parse_header()
+			EvtLexer.Keywords.VSPACE:
+				return _parse_vspace()
 			_:
-				# Regular function call or identifier
-				return _parse_expression_statement()
+				_error("Unhandled keyword: %s" % keyword.value)
+				return null
+	
+	if _check(EvtLexer.TokenType.STRING):
+		return _parse_string()
 	
 	# Block statement
-	if _check(EvtTokenizer.TokenType.LEFT_BRACE):
+	if _check(EvtLexer.TokenType.LBRACE):
 		return _parse_block()
 	
-	# Expression statement
-	return _parse_expression_statement()
+	# Unhandled statement
+	_error("Unhandled token: %s" % _peek().value)
+	return null
 
 ## Parse an IF statement: IF(condition) { ... } ELSE { ... }
-func _parse_if_statement() -> EvtASTNode.IfStatementNode:
-	var if_token = _consume(EvtTokenizer.TokenType.IDENTIFIER, "Expected 'IF'")
+func _parse_if() -> EvtASTNode.IfNode:
+	var if_token = _consume(EvtLexer.TokenType.KEYWORD, "Expected 'IF'")
 	
-	_consume(EvtTokenizer.TokenType.LEFT_PAREN, "Expected '(' after 'IF'")
-	var condition = _parse_expression()
-	_consume(EvtTokenizer.TokenType.RIGHT_PAREN, "Expected ')' after condition")
+	_consume(EvtLexer.TokenType.LPAREN, "Expected '(' after 'IF'")
+	var condition = _parse_condition()
+	_consume(EvtLexer.TokenType.RPAREN, "Expected ')' after condition")
 	
 	_skip_newlines()
 	
-	var if_node = EvtASTNode.IfStatementNode.new(condition, if_token.line, if_token.column)
+	var if_node = EvtASTNode.IfNode.new(condition, if_token.line, if_token.column)
 	
 	# Parse then block
 	var then_block = _parse_block()
@@ -73,10 +91,10 @@ func _parse_if_statement() -> EvtASTNode.IfStatementNode:
 	_skip_newlines()
 
 	# Parse else block
-	if _check(EvtTokenizer.TokenType.IDENTIFIER):
+	if _check(EvtLexer.TokenType.KEYWORD):
 		var identifier = _peek()
 		if identifier.value == "ELSE":
-			_consume(EvtTokenizer.TokenType.IDENTIFIER, "Expected 'ELSE'")
+			_consume(EvtLexer.TokenType.KEYWORD, "Expected 'ELSE'")
 			_skip_newlines()
 			var else_block = _parse_block()
 			if_node.set_else_block(else_block)
@@ -85,16 +103,16 @@ func _parse_if_statement() -> EvtASTNode.IfStatementNode:
 	return if_node
 
 ## Parse a WHILE statement: WHILE(condition) { ... }
-func _parse_while_statement() -> EvtASTNode.WhileStatementNode:
-	var while_token = _consume(EvtTokenizer.TokenType.IDENTIFIER, "Expected 'WHILE'")
+func _parse_while() -> EvtASTNode.WhileNode:
+	var while_token = _consume(EvtLexer.TokenType.KEYWORD, "Expected 'WHILE'")
 	
-	_consume(EvtTokenizer.TokenType.LEFT_PAREN, "Expected '(' after 'WHILE'")
-	var condition = _parse_expression()
-	_consume(EvtTokenizer.TokenType.RIGHT_PAREN, "Expected ')' after condition")
+	_consume(EvtLexer.TokenType.LPAREN, "Expected '(' after 'WHILE'")
+	var condition = _parse_condition()
+	_consume(EvtLexer.TokenType.RPAREN, "Expected ')' after condition")
 	
 	_skip_newlines()
 	
-	var while_node = EvtASTNode.WhileStatementNode.new(condition, while_token.line, while_token.column)
+	var while_node = EvtASTNode.WhileNode.new(condition, while_token.line, while_token.column)
 	
 	# Parse body block
 	var body_block = _parse_block()
@@ -102,106 +120,86 @@ func _parse_while_statement() -> EvtASTNode.WhileStatementNode:
 	
 	return while_node
 
+func _parse_condition() -> EvtASTNode.ExpressionNode:
+	push_warning("TODO Conditions are not handled yet")
+	while not _check(EvtLexer.TokenType.RPAREN):
+		_advance()
+	return EvtASTNode.ExpressionNode.new(0, 0)
+
+func _parse_tag() -> EvtASTNode.TagNode:
+	var start_token = _consume(EvtLexer.TokenType.KEYWORD, "Expected 'TAG'")
+	_consume(EvtLexer.TokenType.LPAREN, "Expected '(' after 'TAG'")
+	var expr = _parse_string()
+	_consume(EvtLexer.TokenType.RPAREN, "Expected ')' after expression")
+	_skip_newlines()
+	return EvtASTNode.TagNode.new(expr.value, start_token.line, start_token.column)
+
+func _parse_header() -> EvtASTNode.HeaderNode:
+	var header = _consume(EvtLexer.TokenType.KEYWORD, "Expected 'HEADER'")
+	_skip_newlines()
+	return EvtASTNode.HeaderNode.new(header.line, header.column)
+
+func _parse_vspace() -> EvtASTNode.VspaceNode:
+	var start_token = _consume(EvtLexer.TokenType.KEYWORD, "Expected 'VSPACE'")
+	_consume(EvtLexer.TokenType.LPAREN, "Expected '(' after 'VSPACE'")
+	var expr = _consume(EvtLexer.TokenType.NUMBER, "Expected NUMBER after '('")
+	_consume(EvtLexer.TokenType.RPAREN, "Expected ')' after expression")
+	_skip_newlines()
+	return EvtASTNode.VspaceNode.new(float(expr.value), start_token.line, start_token.column)
+
 ## Parse a block: { ... }
 func _parse_block() -> EvtASTNode.BlockNode:
-	var start_token = _consume(EvtTokenizer.TokenType.LEFT_BRACE, "Expected '{'")
+	var start_token = _consume(EvtLexer.TokenType.LBRACE, "Expected '{'")
 	var block = EvtASTNode.BlockNode.new(start_token.line, start_token.column)
 	
 	_skip_newlines()
 	
-	while not (_check(EvtTokenizer.TokenType.RIGHT_BRACE) or _match([EvtTokenizer.TokenType.EOF])):
+	while not (_check(EvtLexer.TokenType.RBRACE) or _match([EvtLexer.TokenType.EOF])):
 		var statement = _parse_statement()
 		if statement:
 			block.add_statement(statement)
+		else:
+			_error("Could not parse statement")
+			return null
 		_skip_newlines()
 	
-	_consume(EvtTokenizer.TokenType.RIGHT_BRACE, "Expected '}'")
+	_consume(EvtLexer.TokenType.RBRACE, "Expected '}'")
 	
 	return block
 
-## Parse an expression statement (function call or expression followed by newline/EOF)
-func _parse_expression_statement() -> EvtASTNode:
-	var expr = _parse_expression()
+func _parse_string() -> EvtASTNode.StringLiteralNode:
+	var string = _consume(EvtLexer.TokenType.STRING, "Expected string literal")
 	_skip_newlines()
-	return expr
+	return EvtASTNode.StringLiteralNode.new(string.value, string.line, string.column)
 
-## Parse an expression
-func _parse_expression() -> EvtASTNode:
-	return _parse_unary()
+func _parse_number() -> EvtASTNode.NumberLiteralNode:
+	var number = _consume(EvtLexer.TokenType.NUMBER, "Expected number literal")
+	_skip_newlines()
+	return EvtASTNode.NumberLiteralNode.new(float(number.value), number.line, number.column)
 
 ## Parse unary expressions
 func _parse_unary() -> EvtASTNode:
-	if _match([EvtTokenizer.TokenType.UNARY]):
+	if _match([EvtLexer.TokenType.UNARY]):
 		var operator_token = _previous()
 		var operand = _parse_unary()
 		return EvtASTNode.UnaryExpressionNode.new(operator_token.value, operand, operator_token.line, operator_token.column)
 	
-	return _parse_primary()
-
-## Parse primary expressions (function calls, literals, identifiers)
-func _parse_primary() -> EvtASTNode:
-	# String literal
-	if _match([EvtTokenizer.TokenType.STRING]):
-		var token = _previous()
-		return EvtASTNode.StringLiteralNode.new(token.value, token.line, token.column)
-	
-	# Number literal
-	if _match([EvtTokenizer.TokenType.NUMBER]):
-		var token = _previous()
-		return EvtASTNode.NumberLiteralNode.new(float(token.value), token.line, token.column)
-	
-	# Identifier or function call
-	if _match([EvtTokenizer.TokenType.IDENTIFIER]):
-		var token = _previous()
-		
-		# Check if it's a function call
-		if _check(EvtTokenizer.TokenType.LEFT_PAREN):
-			return _parse_function_call(token)
-		else:
-			# Just an identifier
-			return EvtASTNode.IdentifierNode.new(token.value, token.line, token.column)
-	
-	# Parenthesized expression
-	if _match([EvtTokenizer.TokenType.LEFT_PAREN]):
-		var expr = _parse_expression()
-		_consume(EvtTokenizer.TokenType.RIGHT_PAREN, "Expected ')' after expression")
-		return expr
-	
-	_error("Unexpected token: " + _peek().value)
+	_error("Unhandled unary?")
 	return null
-
-## Parse a function call: FUNCTION(arg1, arg2, ...)
-func _parse_function_call(name_token: EvtTokenizer.Token) -> EvtASTNode.FunctionCallNode:
-	var func_call = EvtASTNode.FunctionCallNode.new(name_token.value, name_token.line, name_token.column)
-	
-	_consume(EvtTokenizer.TokenType.LEFT_PAREN, "Expected '(' after function name")
-	
-	# Parse arguments
-	if not _check(EvtTokenizer.TokenType.RIGHT_PAREN):
-		while true:
-			var arg = _parse_expression()
-			func_call.add_argument(arg)
-			
-			if not _match([EvtTokenizer.TokenType.COMMA]):
-				break
-	
-	_consume(EvtTokenizer.TokenType.RIGHT_PAREN, "Expected ')' after arguments")
-	
-	return func_call
 
 ## Helper methods for token navigation
 
-func _peek() -> EvtTokenizer.Token:
+func _peek() -> EvtLexer.Token:
 	return tokens[current_position]
 
-func _previous() -> EvtTokenizer.Token:
+func _previous() -> EvtLexer.Token:
 	return tokens[current_position - 1]
 
-func _advance() -> EvtTokenizer.Token:
+func _advance() -> EvtLexer.Token:
 	current_position += 1
 	return _previous()
 
-func _check(type: EvtTokenizer.TokenType) -> bool:
+func _check(type: EvtLexer.TokenType) -> bool:
 	return _peek().type == type
 
 func _match(types: Array) -> bool:
@@ -211,7 +209,7 @@ func _match(types: Array) -> bool:
 			return true
 	return false
 
-func _consume(type: EvtTokenizer.TokenType, message: String) -> EvtTokenizer.Token:
+func _consume(type: EvtLexer.TokenType, message: String) -> EvtLexer.Token:
 	if _check(type):
 		return _advance()
 	
@@ -219,7 +217,7 @@ func _consume(type: EvtTokenizer.TokenType, message: String) -> EvtTokenizer.Tok
 	return _peek()
 
 func _skip_newlines() -> void:
-	while _match([EvtTokenizer.TokenType.NEWLINE]):
+	while _match([EvtLexer.TokenType.NEWLINE]):
 		pass
 
 func _error(message: String) -> void:
