@@ -12,11 +12,14 @@ enum NodeType {
 	VSPACE, # VSPACE(...)
 	HEADER, # HEADER
 	BLOCK, # { ... }
+	CHOICE, # CHOICE { option(...) {...} option(...) {...} }
+	CHOSEN, # CHOSEN(...)
 	STRING_LITERAL, # "text"
 	NUMBER_LITERAL, # 123, 4.5
 	IDENTIFIER, # Variable names
-	EXPR, # Expressions
-	UNARY_EXPR, # NOT expression
+	COMPARE, # Comparisons (==)
+	UNARY, # Unary operations (NOT)
+	ASSIGNMENT, # a = 1
 }
 
 var type: NodeType
@@ -38,11 +41,11 @@ func _to_string() -> String:
 	return _to_string_recursive("root", 0)
 
 func _to_string_recursive(child_id: String, indent: int) -> String:
-	var indent_str = "  ".repeat(indent)
+	var indent_str = "| ".repeat(indent)
 	var result = "%s%s:%s" % [indent_str, child_id, NodeType.keys()[type]]
 	
 	if value != null:
-		result += "=%s" % str(value)
+		result += "(%s)" % str(value)
 	
 	result += "\n"
 	
@@ -100,7 +103,19 @@ class TagNode extends EvtASTNode:
 
 class VspaceNode extends EvtASTNode:
 	func _init(p_value: float, p_line: int = 0, p_column: int = 0):
-		super._init(NodeType.TAG, p_value, p_line, p_column)
+		super._init(NodeType.VSPACE, p_value, p_line, p_column)
+
+class ChoiceNode extends EvtASTNode:
+	var options: Array
+
+	func _init(p_line: int = 0, p_column: int = 0):
+		super._init(NodeType.CHOICE, null, p_line, p_column)
+
+	func add_option(p_identifier: EvtASTNode, p_condition: EvtASTNode, p_block: EvtASTNode):
+		options.append([p_identifier, p_condition, p_block])
+		add_printable_child("option", p_identifier)
+		add_printable_child("condition", p_condition)
+		add_printable_child("block", p_block)
 
 class HeaderNode extends EvtASTNode:
 	func _init(p_line: int = 0, p_column: int = 0):
@@ -137,16 +152,36 @@ class IdentifierNode extends EvtASTNode:
 		super._init(NodeType.IDENTIFIER, p_name, p_line, p_column)
 		identifier_name = p_name
 
+class AssignNode extends EvtASTNode:
+	var identifier: EvtASTNode
+	var expression: EvtASTNode
+	
+	func _init(p_identifier: EvtASTNode, p_expression: EvtASTNode, p_line: int = 0, p_column: int = 0):
+		super._init(NodeType.ASSIGNMENT, null, p_line, p_column)
+		identifier = p_identifier
+		expression = p_expression
+		add_printable_child("identifier", p_identifier)
+		add_printable_child("expression", p_expression)
+
+class ComparisonNode extends EvtASTNode:
+	var operator: String
+	var l_operand: EvtASTNode
+	var r_operand: EvtASTNode
+	
+	func _init(p_operator: String, p_left: EvtASTNode, p_right: EvtASTNode, p_line: int = 0, p_column: int = 0):
+		super._init(NodeType.COMPARE, p_operator, p_line, p_column)
+		operator = p_operator
+		l_operand = p_left
+		r_operand = p_right
+		add_printable_child("l_operand", p_left)
+		add_printable_child("r_operand", p_right)
+
 class UnaryExpressionNode extends EvtASTNode:
 	var operator: String
 	var operand: EvtASTNode
 	
 	func _init(p_operator: String, p_operand: EvtASTNode, p_line: int = 0, p_column: int = 0):
-		super._init(NodeType.UNARY_EXPR, p_operator, p_line, p_column)
+		super._init(NodeType.UNARY, p_operator, p_line, p_column)
 		operator = p_operator
 		operand = p_operand
 		add_printable_child("operand", operand)
-
-class ExpressionNode extends EvtASTNode:
-	func _init(p_line: int = 0, p_column: int = 0):
-		super._init(NodeType.EXPR, p_line, p_column)

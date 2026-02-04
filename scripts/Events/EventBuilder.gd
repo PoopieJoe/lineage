@@ -48,11 +48,11 @@ func add_image(path: String) -> EventBuilder:
 	return self
 
 func add_choice(text: String, next_event_id: String) -> EventBuilder:
-	_branch.extend(ChoiceNode.new(_branch, text, next_event_id))
+	_branch.extend(_ChoiceNode.new(_branch, text, next_event_id))
 	return self
 
 func add_choose() -> EventBuilder:
-	_branch.extend(ChooseNode.new(_branch))
+	_branch.extend(_ChooseNode.new(_branch))
 	return self
 
 func add_vspace(size: int) -> EventBuilder:
@@ -88,7 +88,7 @@ func build_next_section(_state: WorldState) -> Array[EventNode]:
 		if _current_build_node == null:
 			break
 		Logger.debug("Node: " + _current_build_node.as_json())
-		if _current_build_node is ChooseNode:
+		if _current_build_node is _ChooseNode:
 			break
 		elif _current_build_node is BranchNode:
 			if _current_build_node.evaluate(_state):

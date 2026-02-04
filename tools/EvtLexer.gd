@@ -10,12 +10,15 @@ enum TokenType {
     RPAREN, # )
     LBRACE, # {
     RBRACE, # }
+    COMPARE, # ==
+    ASSIGN, # =
     UNARY, # Unary operators
-    NEWLINE, # Line breaks
+    NEWLINE, # \n
     KEYWORD, # Keywords
 }
 
-enum Keywords {NOT, IF, ELSE, WHILE, TAG, HEADER, CHOICE, CHOSEN, VSPACE}
+enum Keywords {IF, ELSE, WHILE, TAG, HEADER, CHOICE, VSPACE}
+enum UnaryOperators {NOT}
 
 ## Represents a single token
 class Token:
@@ -94,23 +97,40 @@ func tokenize() -> Array[Token]:
             _tokenize_identifier()
             continue
         
+        
+        # Handle two-character tokens
+        match current_char + _peek():
+            '==':
+                _add_token(TokenType.COMPARE, "==", line, column, 2)
+                _advance()
+                _advance()
+                continue
+
         # Handle single-character tokens
         match current_char:
             '(':
                 _add_token(TokenType.LPAREN, "(", line, column, 1)
                 _advance()
+                continue
             ')':
                 _add_token(TokenType.RPAREN, ")", line, column, 1)
                 _advance()
+                continue
             '{':
                 _add_token(TokenType.LBRACE, "{", line, column, 1)
                 _advance()
+                continue
             '}':
                 _add_token(TokenType.RBRACE, "}", line, column, 1)
                 _advance()
-            _:
-                push_error("Unexpected character '%s' at line %d, column %d" % [current_char, line, column])
-                break
+                continue
+            '=':
+                _add_token(TokenType.ASSIGN, "=", line, column, 1)
+                _advance()
+                continue
+
+        push_error("Unexpected character '%s' at line %d, column %d" % [current_char, line, column])
+        break
     
     _add_token(TokenType.EOF, "", line, column, 0)
     return tokens
@@ -246,6 +266,8 @@ func _tokenize_identifier() -> void:
     var type = TokenType.IDENTIFIER
     if identifier in Keywords.keys():
         type = TokenType.KEYWORD
+    elif identifier in UnaryOperators.keys():
+        type = TokenType.UNARY
     _add_token(type, identifier, line, start_column, len(identifier))
 
 func _add_token(type: TokenType, value: String, p_line: int, p_column: int, p_length: int) -> void:

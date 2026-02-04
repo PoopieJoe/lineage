@@ -5,7 +5,7 @@ extends PageElement
 const text_color: Color = Color.BLACK
 const hover_color: Color = Color.RED
 const pressed_color: Color = Color.GREEN
-const disabled_color: Color = Color.DARK_GRAY 
+const disabled_color: Color = Color.DARK_GRAY
 
 var alignment: HorizontalAlignment = HORIZONTAL_ALIGNMENT_LEFT # Alignment of the button text
 var _current_color: Color = Color.BLACK
@@ -15,7 +15,7 @@ var font_size = 20
 const width = 600
 var _text: String
 const _prefix: String = " > "
-var _node: ChoiceNode
+var _node: _ChoiceNode
 
 var _area: Area2D # Area2D for detecting mouse events
 var _collider: CollisionShape2D # Collision shape for the button
@@ -23,7 +23,7 @@ var _shape: RectangleShape2D # Shape of the button
 var _on_click: Callable # Callable to execute on button click
 var enabled: bool = true
 
-func _init(node: ChoiceNode, text: String, font: Font = ThemeDB.fallback_font) -> void:
+func _init(node: _ChoiceNode, text: String, font: Font = ThemeDB.fallback_font) -> void:
 	_text = text
 	_font = font
 	_node = node
@@ -57,7 +57,7 @@ func _on_input_event(_viewport, event, _shape_idx) -> void:
 		return
 	if event is InputEventMouseButton:
 		if not event.pressed:
-			_on_click.call(self)
+			_on_click.call(self )
 			_current_color = Color.BLACK
 		else:
 			_current_color = Color.GREEN
@@ -68,7 +68,7 @@ func _update_button_area() -> void:
 	_collider.shape = _shape
 	_collider.position = get_size() / 2
 
-func get_evt_node() -> ChoiceNode:
+func get_evt_node() -> _ChoiceNode:
 	return _node
 
 func set_text(value: String) -> void:

@@ -1,5 +1,5 @@
 extends EventNode
-class_name ChoiceNode
+class_name _ChoiceNode
 
 func _init(parent: EventNode, text: String, choice: String):
 	super ("choice", parent)

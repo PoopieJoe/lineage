@@ -10,7 +10,7 @@ VSPACE(1.5)
 "For now, I'll..."
 WHILE(NOT tutorial_explore)
 {
-    CHOICE
+    chosen = CHOICE
     {
         tutorial_explore
         {
@@ -23,7 +23,7 @@ WHILE(NOT tutorial_explore)
         }
     }
 
-    IF(CHOSEN(tutorial_door))
+    IF(chosen == tutorial_door)
     {
         "No matter how hard I push or pull, the massive stone remains."
     }

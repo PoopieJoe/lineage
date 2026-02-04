@@ -1,7 +1,6 @@
-@tool
-extends EditorScript
+extends Node
 
-func _run():
+func _init() -> void:
 	var file = FileAccess.open("res://tools/new.evt", FileAccess.READ)
 	var file_content = file.get_as_text()
 	
@@ -12,10 +11,11 @@ func _run():
 		print("=== Tokenization Results ===")
 		print("Total tokens: %d\n" % tokens.size())
 		
-		#for token in tokens:
-			#print(token)
+		# for token in tokens:
+		# 	print(token)
 
 		var parser = EVTParser.new(tokens)
 		var ast = parser.parse()
 		print("=== AST ===")
 		print(ast)
+	breakpoint
