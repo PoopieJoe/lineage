@@ -1,9 +1,7 @@
 extends Node
 class_name Storyteller
 
-var _event_database: EventDatabase
 var _state: WorldState
-var _current_event: EventBuilder = null
 var _world_map: Map
 var _mapviz: MapVisualizer = MapVisualizer.new()
 @export var data_path: String = "res://data/"
@@ -11,11 +9,8 @@ var _mapviz: MapVisualizer = MapVisualizer.new()
 @export var map_folder: String = "maps/"
 @export var initial_event_id: String = "tutorial_start"
 @export var initial_location_id: String = "tutorial_temple"
-signal event_resolved(new_event: EventRootNode)
 
 func _init() -> void:
-	_event_database = EventDatabase.new()
-	#_event_database.load_events(data_path + event_folder)
 	var map_parser = MapParser.new()
 	var maps = map_parser.load_from_dir(data_path + map_folder)
 	Logger.info("Loaded %d maps from %s" % [maps.size(), data_path + map_folder])
@@ -33,37 +28,9 @@ func get_location() -> String:
 	return _world_map.vertex_name(_state.read(WorldState.LOCATION_ID_KEY))
 
 func _ready() -> void:
-	_current_event = _event_database.get_event(initial_event_id) \
-		.add_header("%s\n%s\n%s\n " % [
-			_state.read(WorldState.LOCATION_NAME_KEY),
-			_state.read(WorldState.DATE_KEY),
-			_state.read(WorldState.TIME_KEY)])
 	_mapviz.highlight(_state.read(WorldState.LOCATION_ID_KEY), Color.RED)
 	print("current location: " + get_location())
 
 func get_world_state() -> WorldState:
 	return _state
 
-func get_current_event() -> EventBuilder:
-	return _current_event
-
-func click(node: EventNode) -> void:
-	if node is _ChoiceNode:
-		_state.write(node.get_choice(), true)
-	elif node == null:
-		# null node indicates end of event
-		resolve_event()
-	else:
-		Logger.warning("Node %s has no associated click behavior" % node.get_type())
-
-func resolve_event() -> void:
-	Logger.info("Event '%s' resolved" % _current_event.get_identifier())
-
-	# Determine next event
-	_current_event = _event_database.get_event(initial_event_id) \
-		.add_header("%s\n%s\n%s\n " % [
-			_state.read(WorldState.LOCATION_NAME_KEY),
-			_state.read(WorldState.DATE_KEY),
-			_state.read(WorldState.TIME_KEY)])
-
-	event_resolved.emit(_current_event)

@@ -12,12 +12,15 @@ enum TokenType {
     RBRACE, # }
     COMPARE, # ==
     ASSIGN, # =
+    COLON, # :
+    COMMA, # ,
+    HASHTAG, # #
     UNARY, # Unary operators
     NEWLINE, # \n
     KEYWORD, # Keywords
 }
 
-enum Keywords {IF, ELSE, WHILE, TAG, HEADER, CHOICE, VSPACE}
+enum Keywords {IF, ELSE, WHILE, START, CHOICE, VSPACE}
 enum UnaryOperators {NOT}
 
 ## Represents a single token
@@ -126,6 +129,18 @@ func tokenize() -> Array[Token]:
                 continue
             '=':
                 _add_token(TokenType.ASSIGN, "=", line, column, 1)
+                _advance()
+                continue
+            ':':
+                _add_token(TokenType.COLON, ":", line, column, 1)
+                _advance()
+                continue
+            '#':
+                _add_token(TokenType.HASHTAG, "#", line, column, 1)
+                _advance()
+                continue
+            ',':
+                _add_token(TokenType.COMMA, ",", line, column, 1)
                 _advance()
                 continue
 

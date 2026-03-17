@@ -45,10 +45,8 @@ func _parse_statement() -> EvtASTNode:
 				return _parse_if()
 			EvtLexer.Keywords.WHILE:
 				return _parse_while()
-			EvtLexer.Keywords.TAG:
-				return _parse_tag()
-			EvtLexer.Keywords.HEADER:
-				return _parse_header()
+			EvtLexer.Keywords.START:
+				return _parse_start()
 			EvtLexer.Keywords.VSPACE:
 				return _parse_vspace()
 			EvtLexer.Keywords.CHOICE:
@@ -64,8 +62,19 @@ func _parse_statement() -> EvtASTNode:
 	if _check(EvtLexer.TokenType.LBRACE):
 		return _parse_block()
 	
-	if _check(EvtLexer.TokenType.IDENTIFIER) and _next().type == EvtLexer.TokenType.ASSIGN:
-		return _parse_assignment()
+	# Assignments and calls
+	if _check(EvtLexer.TokenType.IDENTIFIER):
+		if _next().type == EvtLexer.TokenType.ASSIGN:
+			return _parse_assignment()
+		if _next().type == EvtLexer.TokenType.COLON:
+			return _parse_meta_assignment()
+		if _next().type == EvtLexer.TokenType.LPAREN:
+			return _parse_call()
+		return _parse_identifier()
+
+	# tags
+	if _check(EvtLexer.TokenType.HASHTAG):
+		return _parse_tag()
 
 	# Unhandled statement
 	_error("Unhandled token: %s" % _peek().value)
@@ -141,24 +150,27 @@ func _parse_expression() -> EvtASTNode:
 	if _check(EvtLexer.TokenType.NUMBER):
 		return _parse_number()
 	if _check(EvtLexer.TokenType.IDENTIFIER):
-		return _parse_identifier()
+		if _next().type == EvtLexer.TokenType.LPAREN:
+			return _parse_call()
+		else:
+			return _parse_identifier()
 	if _check(EvtLexer.TokenType.KEYWORD):
 		return _parse_choice()
+	if _check(EvtLexer.TokenType.STRING):
+		return _parse_string()
 	_error("Failed to parse expression of type " + EvtLexer.TokenType.keys()[_peek().type])
 	return null
 
 func _parse_tag() -> EvtASTNode.TagNode:
-	var start_token = _consume(EvtLexer.TokenType.KEYWORD, "Expected 'TAG'")
-	_consume(EvtLexer.TokenType.LPAREN, "Expected '(' after 'TAG'")
-	var expr = _parse_string()
-	_consume(EvtLexer.TokenType.RPAREN, "Expected ')' after expression")
+	var start_token = _consume(EvtLexer.TokenType.HASHTAG, "Expected 'TAG'")
+	var id = _parse_identifier()
 	_skip_newlines()
-	return EvtASTNode.TagNode.new(expr.value, start_token.line, start_token.column)
+	return EvtASTNode.TagNode.new(id.value, start_token.line, start_token.column)
 
-func _parse_header() -> EvtASTNode.HeaderNode:
-	var header = _consume(EvtLexer.TokenType.KEYWORD, "Expected 'HEADER'")
+func _parse_start() -> EvtASTNode.StartNode:
+	var start = _consume(EvtLexer.TokenType.KEYWORD, "Expected 'START'")
 	_skip_newlines()
-	return EvtASTNode.HeaderNode.new(header.line, header.column)
+	return EvtASTNode.StartNode.new(start.line, start.column)
 
 func _parse_vspace() -> EvtASTNode.VspaceNode:
 	var start_token = _consume(EvtLexer.TokenType.KEYWORD, "Expected 'VSPACE'")
@@ -172,10 +184,30 @@ func _parse_identifier() -> EvtASTNode.IdentifierNode:
 	var identifier_token = _consume(EvtLexer.TokenType.IDENTIFIER, "Expected identifier")
 	return EvtASTNode.IdentifierNode.new(identifier_token.value, identifier_token.line, identifier_token.column)
 
+func _parse_call() -> EvtASTNode.CallNode:
+	var identifier = _parse_identifier()
+	var call_node = EvtASTNode.CallNode.new(identifier.value, identifier.line, identifier.column)
+	_consume(EvtLexer.TokenType.LPAREN, "Expected '(' after function name")
+	if not _check(EvtLexer.TokenType.RPAREN):
+		var arg = _parse_expression()
+		call_node.add_arg(arg)
+		while _match([EvtLexer.TokenType.COMMA]):
+			arg = _parse_expression()
+			call_node.add_arg(arg)
+	_consume(EvtLexer.TokenType.RPAREN, "Expected ')' after arguments")
+	return call_node
+
 func _parse_assignment() -> EvtASTNode.AssignNode:
 	var start_token = _peek()
 	var identifier = _parse_identifier()
 	_consume(EvtLexer.TokenType.ASSIGN, "Expected '='")
+	var expression = _parse_expression()
+	return EvtASTNode.AssignNode.new(identifier, expression, start_token.line, start_token.column)
+
+func _parse_meta_assignment() -> EvtASTNode.AssignNode:
+	var start_token = _peek()
+	var identifier = _parse_identifier()
+	_consume(EvtLexer.TokenType.COLON, "Expected ':'")
 	var expression = _parse_expression()
 	return EvtASTNode.AssignNode.new(identifier, expression, start_token.line, start_token.column)
 
@@ -187,25 +219,39 @@ func _parse_choice() -> EvtASTNode.ChoiceNode:
 	_skip_newlines()
 	while not (_check(EvtLexer.TokenType.RBRACE) or _match([EvtLexer.TokenType.EOF])):
 		_skip_newlines()
-		var identifier = _parse_identifier()
-		if not identifier:
-			return null
 
-		var condition = null
-		if _match([EvtLexer.TokenType.LPAREN]):
+		# Expect PROMPT keyword
+		if not (_check(EvtLexer.TokenType.IDENTIFIER) and _peek().value == "PROMPT"):
+			_error("Expected 'PROMPT' inside CHOICE block")
+			return null
+		_advance() # consume PROMPT
+
+		# Parse the label: PROMPT ( "label string" )
+		_consume(EvtLexer.TokenType.LPAREN, "Expected '(' after 'PROMPT'")
+		var label = _parse_string()
+		if not label:
+			return null
+		_consume(EvtLexer.TokenType.RPAREN, "Expected ')' after prompt label")
+		_skip_newlines()
+
+		# Optional inline IF condition: IF (condition)
+		var condition: EvtASTNode = null
+		if _check(EvtLexer.TokenType.KEYWORD) and _peek().value == "IF":
+			_consume(EvtLexer.TokenType.KEYWORD, "Expected 'IF'")
+			_consume(EvtLexer.TokenType.LPAREN, "Expected '(' after 'IF'")
 			if _next().type == EvtLexer.TokenType.COMPARE:
 				condition = _parse_comparison()
 			else:
 				condition = _parse_expression()
 			_consume(EvtLexer.TokenType.RPAREN, "Expected ')' after condition")
-		_skip_newlines()
+			_skip_newlines()
 
 		var block = _parse_block()
 		if not block:
 			return null
 		_skip_newlines()
 
-		choice.add_option(identifier, condition, block)
+		choice.add_option(label, condition, block)
 
 	_skip_newlines()
 	_consume(EvtLexer.TokenType.RBRACE, "Expected '}'")

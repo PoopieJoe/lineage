@@ -15,7 +15,6 @@ var font_size = 20
 const width = 600
 var _text: String
 const _prefix: String = " > "
-var _node: _ChoiceNode
 
 var _area: Area2D # Area2D for detecting mouse events
 var _collider: CollisionShape2D # Collision shape for the button
@@ -23,10 +22,9 @@ var _shape: RectangleShape2D # Shape of the button
 var _on_click: Callable # Callable to execute on button click
 var enabled: bool = true
 
-func _init(node: _ChoiceNode, text: String, font: Font = ThemeDB.fallback_font) -> void:
+func _init(text: String, font: Font = ThemeDB.fallback_font) -> void:
 	_text = text
 	_font = font
-	_node = node
 
 	# Initialize Area2D and CollisionShape2D for mouse interaction
 	_area = Area2D.new()
@@ -67,9 +65,6 @@ func _update_button_area() -> void:
 	_shape.size = get_size()
 	_collider.shape = _shape
 	_collider.position = get_size() / 2
-
-func get_evt_node() -> _ChoiceNode:
-	return _node
 
 func set_text(value: String) -> void:
 	# Set the button text and update size and collider

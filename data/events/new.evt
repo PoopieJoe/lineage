@@ -1,30 +1,42 @@
-TAG(tutorial)
-TAG(start)
+#tutorial #start
 
-ADDHEADER()
-ADDTEXT("My vision has finally started coming back. However slowly, at least I can write now. I must record this, so I won't forget again. I've found myself inside a temple to some god I don't know. I only vaguely remember the stone door sliding shut behind me. What was outside there? A forest I think.")
-BREAK()
-ADDTEXT("I have no memory of this place. I have no memory even coming to this place. But it feels right. I should be here.")
-BREAK()
-ADDTEXT("But where even is... here?")
-BREAK()
-ADDTEXT("Dim flickering light coming from gemstone sconces along the walls and floor flood the hallway in an eerie red, and the act of writing is difficult as I seem to have a fresh cut on my writing hand, from the stone door perhaps? There is a small altar next to the door with a bowl surrounded by unlit candles. The depiction itself is damaged and unreadable, but given the creepy setting the god depicted was no kind god. Did I worship them?")
-ADDVSPACE(1.5)
-ADDTEXT("For now, I'll...")
-WHILE(!tutorial_explore)
-{
-    ADDCHOICE("Investigate the temple.", tutorial_explore)
-    IF(CHOSEN(tutorial_door))
-    {
-        ADDCHOICE("Try opening the stone door again.", tutorial_door)
-    }
-    
-    CHOOSE()
+START
+"My vision has finally started coming back. However slowly, at least I can write now. I must record this, so I won't forget again. I've found myself inside a temple to some god I don't know. I only vaguely remember the stone door sliding shut behind me. What was outside there? A forest I think.
+I have no memory of this place. I have no memory even coming to this place. But it feels right. I should be here.
+But where even is... here?
+Dim flickering light coming from gemstone sconces along the walls and floor flood the hallway in an eerie red, and the act of writing is difficult as I seem to have a fresh cut on my writing hand, from the stone door perhaps? There is a small altar next to the door with a bowl surrounded by unlit candles. The depiction itself is damaged and unreadable, but given the creepy setting the god depicted was no kind god. Did I worship them?"
+VSPACE(0.5)
+"For now, I'll..."
 
-    IF(EQUAL(tutorial_door,LAST_CHOICE()))
-    {
-        "No matter how hard I push or pull, the massive stone remains."
+// Flags are evaluated using the builtin function GET_FLAG
+// The WHILE loop will repeat until the condition is no longer met
+WHILE (NOT GET_FLAG("explore")) {
+
+    /*  CHOICE will prompt player input
+        The listed PROMPTs will be listed as clickable text for the user
+        When a prompt is selected, the block for that prompt is run
+     */
+    CHOICE {
+        PROMPT ( "Investigate the temple." ) {
+            // Flags are set using the builtin SET_FLAG, may later be clear using CLEAR_FLAG
+            SET_FLAG("explore")
+            "I continue to explore the temple"
+            VSPACE(0.5)
+        }
+
+        PROMPT ( "Try opening the stone door again." )
+        IF (NOT GET_FLAG("door_used")) // optionally, a condition may be added. if the condition is not met, the option is omitted
+        {
+            SET_FLAG("door_used")
+            "No matter how hard I push or pull, the massive stone remains."
+            VSPACE(0.5)
+        }
     }
+    VSPACE(0.5)
 }
-ADDVSPACE(1.5)
-ADDTEXT("I continue to explore the temple")
+
+IF( GET_FLAG("door_used") ) {
+    "As I walk away, I hear a grim rumble behind me. It seems as a result of pushing on the stone, the entrance has caved in even further. There really is no way back anymore."
+}
+
+"Done"

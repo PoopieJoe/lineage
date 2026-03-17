@@ -4,22 +4,22 @@ class_name EvtASTNode
 ## Base class for all AST nodes
 
 enum NodeType {
-	ROOT, # Root node
-	CALL, # Function calls
-	IF, # IF(...) { ... } ELSE { ... }
-	WHILE, # WHILE(...) { ... }
-	TAG, # TAG(...)
-	VSPACE, # VSPACE(...)
-	HEADER, # HEADER
-	BLOCK, # { ... }
-	CHOICE, # CHOICE { option(...) {...} option(...) {...} }
-	CHOSEN, # CHOSEN(...)
+	ROOT, 			# Root node
+	CALL, 			# Function calls
+	IF, 			# IF(...) { ... } ELSE { ... }
+	WHILE, 			# WHILE(...) { ... }
+	TAG, 			# #...
+	VSPACE,	 		# VSPACE(...)
+	START, 			# START
+	BLOCK, 			# { ... }
+	CHOICE, 		# CHOICE { option(...) {...} option(...) {...} }
+	CHOSEN, 		# CHOSEN(...)
 	STRING_LITERAL, # "text"
 	NUMBER_LITERAL, # 123, 4.5
-	IDENTIFIER, # Variable names
-	COMPARE, # Comparisons (==)
-	UNARY, # Unary operations (NOT)
-	ASSIGNMENT, # a = 1
+	IDENTIFIER, 	# Variable names
+	COMPARE, 		# Comparisons (==)
+	UNARY, 			# Unary operations (NOT)
+	ASSIGNMENT, 	# a = 1
 }
 
 var type: NodeType
@@ -117,9 +117,9 @@ class ChoiceNode extends EvtASTNode:
 		add_printable_child("condition", p_condition)
 		add_printable_child("block", p_block)
 
-class HeaderNode extends EvtASTNode:
+class StartNode extends EvtASTNode:
 	func _init(p_line: int = 0, p_column: int = 0):
-		super._init(NodeType.HEADER, null, p_line, p_column)
+		super._init(NodeType.START, null, p_line, p_column)
 
 class BlockNode extends EvtASTNode:
 	var statements: Array[EvtASTNode] = []
@@ -132,25 +132,27 @@ class BlockNode extends EvtASTNode:
 		add_printable_child("statement", statement)
 
 class StringLiteralNode extends EvtASTNode:
-	var string_value: String
-	
 	func _init(p_value: String, p_line: int = 0, p_column: int = 0):
 		super._init(NodeType.STRING_LITERAL, p_value, p_line, p_column)
-		string_value = p_value
 
 class NumberLiteralNode extends EvtASTNode:
-	var number_value: float
-	
 	func _init(p_value: float, p_line: int = 0, p_column: int = 0):
 		super._init(NodeType.NUMBER_LITERAL, p_value, p_line, p_column)
-		number_value = p_value
 
 class IdentifierNode extends EvtASTNode:
-	var identifier_name: String
-	
 	func _init(p_name: String, p_line: int = 0, p_column: int = 0):
 		super._init(NodeType.IDENTIFIER, p_name, p_line, p_column)
-		identifier_name = p_name
+
+class CallNode extends EvtASTNode:
+	var identifier: EvtASTNode
+	var args: Array[EvtASTNode] = []
+	func _init(p_name: String, p_line: int = 0, p_column: int = 0):
+		super._init(NodeType.CALL, p_name, p_line, p_column)
+
+	func add_arg(arg: EvtASTNode) -> void:
+		args.append(arg)
+		add_printable_child("arg", arg)
+
 
 class AssignNode extends EvtASTNode:
 	var identifier: EvtASTNode
