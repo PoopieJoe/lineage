@@ -42,21 +42,16 @@ func eval_string_literal(p_node: EvtASTNode.StringLiteralNode) -> Variant:
     return p_node.value
 
 func eval_choice(p_node: EvtASTNode.ChoiceNode) -> Variant:
+    var options = []
     for element in p_node.options:
         var condition = true
         if element[1] != null:
             condition = await eval_condition(element[1])
             if condition is EVTInterpreterError:
                 return condition
+        options.append({"label": element[0].value, "condition": condition})
 
-        # element[0] is now a StringLiteralNode holding the display label
-        var label: String = element[0].value
-        var choice = {
-            "label": label,
-            "condition": condition as bool,
-        }
-        if choice["condition"]:
-            new_element.emit("choice", choice)
+    new_element.emit("choice", options)
 
     var result = await wait_for_user("choice")
     var chosen_label = result[1]
