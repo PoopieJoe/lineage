@@ -76,9 +76,6 @@ func add_elements(elements: Array[PageElement]) -> void:
         pages.append(new_page)
     reload_page()
   
-func on_click(element: PageElement) -> void:
-    pass
-
 func _on_new_element(type, value) -> void:
     match type:
         "text":
@@ -99,7 +96,7 @@ func _on_new_element(type, value) -> void:
                     el.set_on_click(onclick)
                 else:
                     # TODO: how to handle unavailable choices? Display their condition? What if the writer does not want the condition to be explicitly mentioned? 
-                    continue
+                    el.disable()
                 button_group.append(el)
                 add_elements([el])
 

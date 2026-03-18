@@ -14,7 +14,6 @@ var _font: Font
 var font_size = 20
 const width = 600
 var _text: String
-const _prefix: String = " > "
 
 var _area: Area2D # Area2D for detecting mouse events
 var _collider: CollisionShape2D # Collision shape for the button
@@ -55,8 +54,8 @@ func _on_input_event(_viewport, event, _shape_idx) -> void:
 		return
 	if event is InputEventMouseButton:
 		if not event.pressed:
-			_on_click.call(self )
 			_current_color = Color.BLACK
+			_on_click.call(self)
 		else:
 			_current_color = Color.GREEN
 		queue_redraw()
@@ -68,7 +67,7 @@ func _update_button_area() -> void:
 
 func set_text(value: String) -> void:
 	# Set the button text and update size and collider
-	_text = _prefix + value
+	_text = value
 	_update_button_area()
 	queue_redraw()
 
@@ -88,10 +87,10 @@ func disable() -> void:
 func _draw():
 	# draw_bounding_box()
 	if _font and _text != "":
-		draw_multiline_string(_font, Vector2(0, _font.get_height(font_size)), _prefix + _text, alignment, width, font_size, -1, _current_color)
+		draw_multiline_string(_font, Vector2(0, _font.get_height(font_size)), _text, alignment, width, font_size, -1, _current_color)
 
 func get_size():
-	return _font.get_multiline_string_size(_prefix + _text, alignment, width, font_size)
+	return _font.get_multiline_string_size(_text, alignment, width, font_size)
 
 func set_size(_value: Vector2):
 	Logger.error("set_size() should not be called on ChoiceButton2D")
