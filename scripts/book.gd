@@ -94,6 +94,7 @@ func _on_new_element(type, value) -> void:
                             button.disable()
                         interpreter.element_interaction.emit(type, choice["label"])
                     el.set_on_click(onclick)
+                    el.set_icon("ico_sword_Sympnoiaicon.png",Vector2(20,20))
                 else:
                     # TODO: how to handle unavailable choices? Display their condition? What if the writer does not want the condition to be explicitly mentioned? 
                     el.disable()
